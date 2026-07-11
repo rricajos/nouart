@@ -40,7 +40,9 @@
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+/* Reserva siempre el hueco de la barra de scroll → sin salto horizontal
+   entre páginas con y sin scroll. */
+html { -webkit-text-size-adjust: 100%; scrollbar-gutter: stable; }
 body {
 	margin: 0;
 	background: var(--bg);
