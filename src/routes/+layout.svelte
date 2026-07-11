@@ -138,7 +138,9 @@
 	</div>
 </header>
 
-<!-- Paredes laterales fijas del marco (móvil): forman un cuadro con el nav superior e inferior -->
+<!-- Marco del móvil (2 capas, cada una una sola figura → esquinas limpias):
+     .frame-glass = cristal (blur, mismo material que el nav) · .frame = líneas del borde -->
+<div class="frame-glass" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
 
 <main>
@@ -238,7 +240,7 @@
 	@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 	/* elementos sólo-móvil ocultos en escritorio */
-	.topbar, .mobile-bar, .frame { display: none; }
+	.topbar, .mobile-bar, .frame, .frame-glass { display: none; }
 
 	main { min-height: 70vh; }
 
@@ -309,11 +311,11 @@
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; margin: 0 0.45rem; }
 
-		/* Marco = UNA sola figura (anillo de 9px) fija entre el nav superior (60px) y el
-		   inferior (74px). Mismo material que el nav (frosted + blur) vía máscara, así
-		   nav y marco se sienten integrados y las esquinas quedan limpias. */
-		.frame {
-			display: block; position: fixed; z-index: 15; pointer-events: none;
+		/* Marco entre el nav superior (60px) y el inferior (74px). Dos capas, cada una
+		   UNA sola figura → esquinas siempre limpias. */
+		/* Capa 1: cristal (anillo de 9px con el MISMO material que el nav: frosted+blur) */
+		.frame-glass {
+			display: block; position: fixed; z-index: 14; pointer-events: none;
 			top: 60px; bottom: 74px; left: 0; right: 0;
 			padding: 9px;
 			background: color-mix(in srgb, var(--bg) 88%, transparent);
@@ -323,6 +325,16 @@
 			-webkit-mask-composite: xor;
 			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			mask-composite: exclude;
+		}
+		/* Capa 2: líneas del borde (límite exterior con los nav + interior con el contenido) */
+		.frame {
+			display: block; position: fixed; z-index: 16; pointer-events: none;
+			top: 60px; bottom: 74px; left: 0; right: 0;
+			border: 1px solid var(--line);
+		}
+		.frame::after {
+			content: ''; position: absolute; inset: 8px;
+			border: 1px solid var(--line);
 		}
 		/* El gutter va en main (no en .wrap) para que TODO el contenido —incluidas
 		   las secciones a ancho completo— quede separado de las paredes del marco. */
