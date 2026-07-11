@@ -138,6 +138,9 @@
 	</div>
 </header>
 
+<!-- Paredes laterales fijas del marco (móvil): forman un cuadro con el nav superior e inferior -->
+<div class="frame" aria-hidden="true"></div>
+
 <main>
 	{@render children()}
 </main>
@@ -235,7 +238,7 @@
 	@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 	/* elementos sólo-móvil ocultos en escritorio */
-	.topbar, .mobile-bar { display: none; }
+	.topbar, .mobile-bar, .frame { display: none; }
 
 	main { min-height: 70vh; }
 
@@ -306,16 +309,18 @@
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; }
 
-		/* marco: paredes laterales anchas + respiro interior + hueco de la barra inferior */
-		main {
+		/* Paredes laterales FIJAS: mismo estilo (9px) que el nav superior/inferior.
+		   Entre el header (60px) y la barra inferior (74px) → cuadro permanente. */
+		.frame {
+			display: block; position: fixed; z-index: 15; pointer-events: none;
+			top: 60px; bottom: 74px; left: 0; right: 0;
 			border-left: 9px solid var(--line); border-right: 9px solid var(--line);
+		}
+		main {
 			min-height: calc(100vh - 60px - 74px);
-			padding: 0.75rem 0 1rem;
+			padding: 1.4rem 0 1.6rem;
 		}
-		.site-footer {
-			margin-top: 0; border-top: 9px solid var(--line);
-			padding: 2rem 0 calc(2rem + 74px);
-		}
+		.site-footer { margin-top: 0; padding: 2rem 0 calc(2rem + 74px); }
 
 		.mobile-bar {
 			position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; height: 74px;
