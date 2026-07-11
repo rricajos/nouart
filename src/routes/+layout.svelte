@@ -309,17 +309,24 @@
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; }
 
-		/* Paredes laterales FIJAS: mismo estilo (9px) que el nav superior/inferior.
+		/* Paredes laterales FIJAS con el MISMO fondo/estilo que los nav (frosted + blur).
 		   Entre el header (60px) y la barra inferior (74px) → cuadro permanente. */
-		.frame {
-			display: block; position: fixed; z-index: 15; pointer-events: none;
-			top: 60px; bottom: 74px; left: 0; right: 0;
-			border-left: 9px solid var(--line); border-right: 9px solid var(--line);
+		.frame { display: block; }
+		.frame::before, .frame::after {
+			content: ''; position: fixed; z-index: 15; pointer-events: none;
+			top: 60px; bottom: 74px; width: 9px;
+			background: color-mix(in srgb, var(--bg) 92%, transparent);
+			-webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 		}
+		.frame::before { left: 0; border-right: 1px solid var(--line); }
+		.frame::after { right: 0; border-left: 1px solid var(--line); }
+		/* El gutter va en main (no en .wrap) para que TODO el contenido —incluidas
+		   las secciones a ancho completo— quede separado de las paredes del marco. */
 		main {
 			min-height: calc(100vh - 60px - 74px);
-			padding: 1.4rem 0 1.6rem;
+			padding: 1.5rem 1.7rem 1.8rem;
 		}
+		main :global(.wrap) { padding-left: 0; padding-right: 0; }
 		.site-footer { margin-top: 0; padding: 2rem 0 calc(2rem + 74px); }
 
 		.mobile-bar {
