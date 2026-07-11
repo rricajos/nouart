@@ -298,8 +298,8 @@
 	@media (max-width: 820px) {
 		.brand, .desk-nav, .theme-desktop { display: none; }
 
-		/* barra superior = rótulo del marco */
-		.site-header { border-bottom: 1px solid var(--line); }
+		/* barra superior = rótulo del marco (sin borde horizontal: no corta las paredes) */
+		.site-header { border-bottom: 0; }
 		.header-inner { height: 60px; }
 		.topbar {
 			display: flex; align-items: center; gap: 0.6rem; width: 100%;
@@ -334,7 +334,7 @@
 			display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
 			padding: 0 1rem;
 			background: color-mix(in srgb, var(--bg) 92%, transparent);
-			backdrop-filter: blur(10px); border-top: 1px solid var(--line);
+			backdrop-filter: blur(10px); border-top: 0;
 		}
 		/* botones del nav inferior del mismo tamaño que la X del menú (46px) */
 		.mobile-bar .icon-btn { width: 46px; height: 46px; font-size: 1.35rem; }
