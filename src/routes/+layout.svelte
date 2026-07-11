@@ -155,17 +155,15 @@
 	</div>
 </footer>
 
-<!-- Móvil: barra inferior (tema + menú) -->
+<!-- Móvil: barra inferior (tema + menú), botones circulares a la derecha -->
 <div class="mobile-bar">
-	<button class="bar-btn" onclick={toggleTheme} aria-label="Cambiar tema">
-		<span class="bar-ico">{theme === 'dark' ? '☀' : '☾'}</span>
-		<span>{theme === 'dark' ? 'Claro' : 'Oscuro'}</span>
+	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
+		{theme === 'dark' ? '☀' : '☾'}
 	</button>
-	<button class="bar-btn" onclick={() => (menuOpen = true)} aria-label="Abrir menú">
+	<button class="icon-btn" onclick={() => (menuOpen = true)} aria-label="Abrir menú" title="Menú">
 		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
 			<path d="M4 7h16M4 12h16M4 17h16" />
 		</svg>
-		<span>Menú</span>
 	</button>
 </div>
 
@@ -253,36 +251,36 @@
 	/* ===================== MÓVIL: marco ===================== */
 	@media (max-width: 820px) {
 		.brand, .desk-nav, .theme-desktop { display: none; }
-		.header-inner { height: 56px; }
+
+		/* barra superior = rótulo del marco */
+		.site-header { border-bottom: 3px solid var(--line); }
+		.header-inner { height: 60px; }
 		.topbar {
-			display: flex; align-items: center; gap: 0.55rem; width: 100%;
-			background: none; border: 0; cursor: pointer; padding: 0; color: var(--text);
-			font-family: var(--serif); font-size: 1.2rem; font-weight: 600;
+			display: flex; align-items: center; gap: 0.6rem; width: 100%;
+			background: none; border: 0; cursor: pointer; padding: 0.3rem 0; color: var(--text);
+			font-family: var(--serif); font-size: 1.25rem; font-weight: 600;
 		}
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; }
 
-		/* marco: bordes laterales del contenido + hueco para la barra inferior */
+		/* marco: paredes laterales anchas + respiro interior + hueco de la barra inferior */
 		main {
-			border-left: 1px solid var(--line); border-right: 1px solid var(--line);
-			min-height: calc(100vh - 56px - 60px);
+			border-left: 3px solid var(--line); border-right: 3px solid var(--line);
+			min-height: calc(100vh - 60px - 66px);
+			padding: 0.75rem 0 1rem;
 		}
-		.site-footer { margin-top: 2.5rem; padding-bottom: calc(1.5rem + 60px); }
+		.site-footer {
+			margin-top: 0; border-top: 3px solid var(--line);
+			padding: 2rem 0 calc(2rem + 66px);
+		}
 
 		.mobile-bar {
-			position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; height: 60px;
-			display: flex; align-items: stretch; justify-content: space-between;
+			position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; height: 66px;
+			display: flex; align-items: center; justify-content: flex-end; gap: 0.65rem;
+			padding: 0 1.1rem;
 			background: color-mix(in srgb, var(--bg) 92%, transparent);
-			backdrop-filter: blur(10px); border-top: 1px solid var(--line);
+			backdrop-filter: blur(10px); border-top: 3px solid var(--line);
 		}
-		.bar-btn {
-			flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
-			background: none; border: 0; cursor: pointer; color: var(--muted);
-			font: inherit; font-size: 0.72rem; letter-spacing: 0.02em;
-		}
-		.bar-btn:first-child { border-right: 1px solid var(--line); }
-		.bar-btn:hover { color: var(--text); }
-		.bar-ico { font-size: 1.15rem; line-height: 1; }
 	}
 
 	/* Footer responsive */
