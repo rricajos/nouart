@@ -309,13 +309,20 @@
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; margin: 0 0.45rem; }
 
-		/* Marco = UNA sola figura (rectángulo con borde en los 4 lados) fija entre el
-		   nav superior (60px) y el inferior (74px). Al ser un único elemento, las
-		   esquinas se unen limpias (no chocan dos figuras). */
+		/* Marco = UNA sola figura (anillo de 9px) fija entre el nav superior (60px) y el
+		   inferior (74px). Mismo material que el nav (frosted + blur) vía máscara, así
+		   nav y marco se sienten integrados y las esquinas quedan limpias. */
 		.frame {
 			display: block; position: fixed; z-index: 15; pointer-events: none;
 			top: 60px; bottom: 74px; left: 0; right: 0;
-			border: 9px solid var(--line);
+			padding: 9px;
+			background: color-mix(in srgb, var(--bg) 88%, transparent);
+			-webkit-backdrop-filter: blur(10px);
+			backdrop-filter: blur(10px);
+			-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+			-webkit-mask-composite: xor;
+			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+			mask-composite: exclude;
 		}
 		/* El gutter va en main (no en .wrap) para que TODO el contenido —incluidas
 		   las secciones a ancho completo— quede separado de las paredes del marco. */
