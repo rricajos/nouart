@@ -50,8 +50,9 @@ Sin seed de demo, el sitio arranca vacío. Entra en `https://nouart.org/admin` c
 
 Para cargar los datos de demostración (opcional, entorno de pruebas):
 ```bash
-docker exec -e DATA_DIR=/data $(docker ps -qf name=nouart_app) \
-  node --experimental-strip-types scripts/seed.ts   # ⚠️ borra y reinserta demo
+C=$(docker ps -qf name=nouart_app)
+docker cp scripts/seed.cjs "$C":/app/seed.cjs
+docker exec -w /app -e DATA_DIR=/data "$C" node seed.cjs   # ⚠️ borra y reinserta demo
 ```
 
 ## 5. Despliegues siguientes (CI)

@@ -16,7 +16,7 @@ Sin base de datos externa: todo (BD + imágenes) vive en `DATA_DIR` (`./data` en
 
 ```bash
 npm install
-node --experimental-strip-types scripts/seed.ts   # datos de demo (opcional)
+DATA_DIR=./data node scripts/seed.cjs   # datos de demo (opcional)
 npm run dev
 ```
 

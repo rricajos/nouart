@@ -19,8 +19,6 @@
 <svelte:head>
 	<title>{aw.title} — {aw.artist_name} · Nou Art</title>
 	<meta name="description" content={aw.description.slice(0, 155)} />
-	<meta property="og:title" content={`${aw.title} — ${aw.artist_name}`} />
-	{#if aw.image}<meta property="og:image" content={`/uploads/${aw.image}`} />{/if}
 </svelte:head>
 
 <div class="wrap page">
