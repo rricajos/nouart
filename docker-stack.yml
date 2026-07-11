@@ -1,0 +1,51 @@
+# Nou Art — Docker Swarm stack for the ricajos multiclient VPS (86.48.1.238).
+# Conventions match xorisu/superyayas: external overlay network `network`,
+# Traefik v3 with entrypoints web/websecure + certresolver `letsencrypt`.
+#
+# Deploy:  docker stack deploy -c docker-stack.yml nouart
+# Build:   docker build -t nouart:latest .   (CI does this on push to main)
+
+version: "3.8"
+
+services:
+  app:
+    image: nouart:latest
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATA_DIR: /data
+      ORIGIN: https://nouart.org
+      # Secrets — set on the VPS, do NOT commit real values (see .env.example):
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      MAIL_FROM: ${MAIL_FROM:-Nou Art <noreply@nouart.org>}
+      CONTACT_FALLBACK: ${CONTACT_FALLBACK:-hola@nouart.org}
+    volumes:
+      - nouart_data:/data
+    networks:
+      - network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=network
+        # Canonical host
+        - traefik.http.routers.nouart.rule=Host(`nouart.org`) || Host(`www.nouart.org`)
+        - traefik.http.routers.nouart.entrypoints=websecure
+        - traefik.http.routers.nouart.tls.certresolver=letsencrypt
+        - traefik.http.services.nouart.loadbalancer.server.port=3000
+        # Redirect www -> apex
+        - traefik.http.routers.nouart.middlewares=nouart-www
+        - traefik.http.middlewares.nouart-www.redirectregex.regex=^https://www\.nouart\.org/(.*)
+        - traefik.http.middlewares.nouart-www.redirectregex.replacement=https://nouart.org/$${1}
+        - traefik.http.middlewares.nouart-www.redirectregex.permanent=true
+
+networks:
+  network:
+    external: true
+
+volumes:
+  nouart_data:

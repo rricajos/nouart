@@ -1,0 +1,28 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/**'
+      - '**.md'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    # Self-hosted runner on the ricajos VPS (86.48.1.238). Register one for this
+    # repo with the label `nouart` (see DEPLOY.md), or reuse an org-level runner.
+    runs-on: [self-hosted, nouart]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t nouart:latest .
+
+      - name: Deploy stack
+        run: |
+          docker stack deploy -c docker-stack.yml nouart --with-registry-auth
+          docker service update --image nouart:latest --force nouart_app
+
+      - name: Prune old images
+        run: docker image prune -f
