@@ -313,10 +313,11 @@
 
 		/* Marco entre el nav superior (60px) y el inferior (74px). Dos capas, cada una
 		   UNA sola figura → esquinas siempre limpias. */
-		/* Capa 1: cristal (anillo de 9px con el MISMO material que el nav: frosted+blur) */
+		/* Capa 1: cristal (anillo de 9px con el MISMO material que el nav: frosted+blur).
+		   bottom:73 = solapa 1px la barra inferior → sin gap. */
 		.frame-glass {
 			display: block; position: fixed; z-index: 14; pointer-events: none;
-			top: 60px; bottom: 74px; left: 0; right: 0;
+			top: 60px; bottom: 73px; left: 0; right: 0;
 			padding: 9px;
 			background: color-mix(in srgb, var(--bg) 88%, transparent);
 			-webkit-backdrop-filter: blur(10px);
@@ -326,14 +327,10 @@
 			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			mask-composite: exclude;
 		}
-		/* Capa 2: líneas del borde (límite exterior con los nav + interior con el contenido) */
+		/* Capa 2: SOLO el borde interno (límite del marco con el contenido) */
 		.frame {
 			display: block; position: fixed; z-index: 16; pointer-events: none;
-			top: 60px; bottom: 74px; left: 0; right: 0;
-			border: 1px solid var(--line);
-		}
-		.frame::after {
-			content: ''; position: absolute; inset: 8px;
+			top: 69px; bottom: 82px; left: 9px; right: 9px;
 			border: 1px solid var(--line);
 		}
 		/* El gutter va en main (no en .wrap) para que TODO el contenido —incluidas
