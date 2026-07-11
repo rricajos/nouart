@@ -27,11 +27,31 @@
 		localStorage.setItem('nouart-theme', theme);
 	}
 
+	let toast = $state('');
+	async function share() {
+		const url = page.url.href;
+		if (navigator.share) {
+			try {
+				await navigator.share({ title: 'Nou Art', text: 'Nou Art — cultura que une a la comunidad', url });
+			} catch {
+				/* el usuario canceló */
+			}
+			return;
+		}
+		try {
+			await navigator.clipboard.writeText(url);
+			toast = 'Enlace copiado';
+			setTimeout(() => (toast = ''), 2200);
+		} catch {
+			/* sin permiso de portapapeles */
+		}
+	}
+
 	const nav = [
 		{ href: '/', label: 'Inicio' },
 		{ href: '/galeria', label: 'Galería' },
 		{ href: '/artistas', label: 'Artistas' },
-		{ href: '/sobre', label: 'Sobre' },
+		{ href: '/sobre', label: 'Acerca de' },
 		{ href: '/contacto', label: 'Contacto' }
 	];
 	const path = $derived(page.url.pathname);
@@ -41,7 +61,7 @@
 	const sections = [
 		{ test: (p: string) => p.startsWith('/galeria') || p.startsWith('/obra'), label: 'Galería' },
 		{ test: (p: string) => p.startsWith('/artistas') || p.startsWith('/artista'), label: 'Artistas' },
-		{ test: (p: string) => p.startsWith('/sobre'), label: 'Sobre' },
+		{ test: (p: string) => p.startsWith('/sobre'), label: 'Acerca de' },
 		{ test: (p: string) => p.startsWith('/contacto'), label: 'Contacto' },
 		{ test: (p: string) => p.startsWith('/admin'), label: 'Gestión' }
 	];
@@ -139,7 +159,7 @@
 		</nav>
 		<nav class="foot-col">
 			<h4>Asociación</h4>
-			<a href="/sobre">Sobre nosotros</a>
+			<a href="/sobre">Acerca de</a>
 			<a href="/contacto">Contacto</a>
 			<a href="/admin">Acceso gestión</a>
 		</nav>
@@ -155,17 +175,33 @@
 	</div>
 </footer>
 
-<!-- Móvil: barra inferior (tema + menú), botones circulares a la derecha -->
+<!-- Móvil: barra inferior (botones circulares a la derecha) -->
 <div class="mobile-bar">
 	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
 		{theme === 'dark' ? '☀' : '☾'}
 	</button>
+	<a class="icon-btn" href="/admin" aria-label="Perfil / gestión" title="Perfil">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="8" r="3.4" />
+			<path d="M5.5 20c1.2-3.4 3.8-5 6.5-5s5.3 1.6 6.5 5" />
+		</svg>
+	</a>
+	<button class="icon-btn" onclick={share} aria-label="Compartir enlace" title="Compartir">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="18" cy="5" r="2.6" />
+			<circle cx="6" cy="12" r="2.6" />
+			<circle cx="18" cy="19" r="2.6" />
+			<path d="M8.3 13.3l7.4 4.4M15.7 6.3l-7.4 4.4" />
+		</svg>
+	</button>
 	<button class="icon-btn" onclick={() => (menuOpen = true)} aria-label="Abrir menú" title="Menú">
-		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
 			<path d="M4 7h16M4 12h16M4 17h16" />
 		</svg>
 	</button>
 </div>
+
+{#if toast}<div class="toast" role="status">{toast}</div>{/if}
 
 <style>
 	.site-header {
@@ -190,6 +226,13 @@
 		display: inline-flex; align-items: center; justify-content: center; flex: none;
 	}
 	.icon-btn:hover { border-color: var(--accent); }
+
+	.toast {
+		position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%); z-index: 120;
+		background: var(--text); color: var(--bg); padding: 0.6rem 1.15rem; border-radius: 999px;
+		font-size: 0.9rem; font-weight: 500; box-shadow: var(--shadow); animation: toast-in 0.2s ease;
+	}
+	@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 	/* elementos sólo-móvil ocultos en escritorio */
 	.topbar, .mobile-bar { display: none; }
@@ -253,7 +296,7 @@
 		.brand, .desk-nav, .theme-desktop { display: none; }
 
 		/* barra superior = rótulo del marco */
-		.site-header { border-bottom: 3px solid var(--line); }
+		.site-header { border-bottom: 9px solid var(--line); }
 		.header-inner { height: 60px; }
 		.topbar {
 			display: flex; align-items: center; gap: 0.6rem; width: 100%;
@@ -265,22 +308,24 @@
 
 		/* marco: paredes laterales anchas + respiro interior + hueco de la barra inferior */
 		main {
-			border-left: 3px solid var(--line); border-right: 3px solid var(--line);
-			min-height: calc(100vh - 60px - 66px);
+			border-left: 9px solid var(--line); border-right: 9px solid var(--line);
+			min-height: calc(100vh - 60px - 74px);
 			padding: 0.75rem 0 1rem;
 		}
 		.site-footer {
-			margin-top: 0; border-top: 3px solid var(--line);
-			padding: 2rem 0 calc(2rem + 66px);
+			margin-top: 0; border-top: 9px solid var(--line);
+			padding: 2rem 0 calc(2rem + 74px);
 		}
 
 		.mobile-bar {
-			position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; height: 66px;
-			display: flex; align-items: center; justify-content: flex-end; gap: 0.65rem;
-			padding: 0 1.1rem;
+			position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; height: 74px;
+			display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
+			padding: 0 1rem;
 			background: color-mix(in srgb, var(--bg) 92%, transparent);
-			backdrop-filter: blur(10px); border-top: 3px solid var(--line);
+			backdrop-filter: blur(10px); border-top: 9px solid var(--line);
 		}
+		/* botones del nav inferior del mismo tamaño que la X del menú (46px) */
+		.mobile-bar .icon-btn { width: 46px; height: 46px; font-size: 1.35rem; }
 	}
 
 	/* Footer responsive */

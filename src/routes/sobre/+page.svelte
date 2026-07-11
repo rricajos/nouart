@@ -3,13 +3,13 @@
 </script>
 
 <svelte:head>
-	<title>Sobre Nou Art</title>
+	<title>Acerca de Nou Art</title>
 	<meta name="description" content="Qué es Nou Art, asociación cultural de Nou Barris: talleres, eventos, exposiciones y proyectos culturales." />
 </svelte:head>
 
 <div class="wrap page">
 	<p class="eyebrow">Quiénes somos</p>
-	<h1>Sobre {site.name}</h1>
+	<h1>Acerca de {site.name}</h1>
 
 	<div class="prose">
 		<p class="lead">{site.about}</p>
