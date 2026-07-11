@@ -132,7 +132,7 @@
 		<button class="topbar" onclick={() => (menuOpen = true)} aria-label="Abrir menú">
 			<img class="brand-mark" src={favicon} alt="" width="28" height="28" />
 			<span class="topbar-title">
-				Nou Art{#if currentLabel}<span class="sep"> · </span>{currentLabel}{/if}
+				Nou Art{#if currentLabel}<span class="sep">·</span>{currentLabel}{/if}
 			</span>
 		</button>
 	</div>
@@ -307,19 +307,16 @@
 			font-family: var(--serif); font-size: 1.25rem; font-weight: 600;
 		}
 		.topbar-title { display: inline-flex; align-items: baseline; }
-		.sep { color: var(--muted); font-weight: 400; }
+		.sep { color: var(--muted); font-weight: 400; margin: 0 0.45rem; }
 
-		/* Paredes laterales FIJAS con el MISMO fondo/estilo que los nav (frosted + blur).
-		   Entre el header (60px) y la barra inferior (74px) → cuadro permanente. */
-		.frame { display: block; }
-		.frame::before, .frame::after {
-			content: ''; position: fixed; z-index: 15; pointer-events: none;
-			top: 60px; bottom: 74px; width: 9px;
-			background: color-mix(in srgb, var(--bg) 92%, transparent);
-			-webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+		/* Marco = UNA sola figura (rectángulo con borde en los 4 lados) fija entre el
+		   nav superior (60px) y el inferior (74px). Al ser un único elemento, las
+		   esquinas se unen limpias (no chocan dos figuras). */
+		.frame {
+			display: block; position: fixed; z-index: 15; pointer-events: none;
+			top: 60px; bottom: 74px; left: 0; right: 0;
+			border: 9px solid var(--line);
 		}
-		.frame::before { left: 0; border-right: 1px solid var(--line); }
-		.frame::after { right: 0; border-left: 1px solid var(--line); }
 		/* El gutter va en main (no en .wrap) para que TODO el contenido —incluidas
 		   las secciones a ancho completo— quede separado de las paredes del marco. */
 		main {
