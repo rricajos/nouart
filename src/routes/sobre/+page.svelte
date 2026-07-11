@@ -1,44 +1,54 @@
+<script lang="ts">
+	import { site, services, contact } from '$lib/content';
+</script>
+
 <svelte:head>
 	<title>Sobre Nou Art</title>
-	<meta name="description" content="Qué es Nou Art, la asociación de artistas de Nou Barris." />
+	<meta name="description" content="Qué es Nou Art, asociación cultural de Nou Barris: talleres, eventos, exposiciones y proyectos culturales." />
 </svelte:head>
 
 <div class="wrap page">
 	<p class="eyebrow">Quiénes somos</p>
-	<h1>Sobre Nou Art</h1>
+	<h1>Sobre {site.name}</h1>
 
 	<div class="prose">
-		<p class="lead">
-			Nou Art es una asociación sin ánimo de lucro que reúne a artistas del distrito de
-			Nou Barris, en Barcelona. Nacimos para dar visibilidad al arte que se hace en el barrio
-			y acercarlo a cualquier persona, esté donde esté.
-		</p>
-		<p>
-			En esta plataforma mostramos la obra de nuestras y nuestros artistas —pintura, fotografía,
-			ilustración, escultura y más— para que puedas descubrirla, comentarla y ponerte en contacto
-			directamente con quien la crea. Sin intermediarios y en abierto.
-		</p>
-		<h2>Qué hacemos</h2>
-		<ul>
-			<li>Exponer online la obra de los artistas del colectivo.</li>
-			<li>Recoger la opinión y el apoyo del público a cada obra.</li>
-			<li>Poner en contacto a artistas con quien se interese por su trabajo.</li>
-			<li>Organizar muestras y actividades en el barrio.</li>
-		</ul>
-		<h2>¿Eres artista de Nou Barris?</h2>
-		<p>
-			Si haces arte en el distrito y quieres formar parte de Nou Art, escríbenos a
-			<a href="mailto:hola@nouart.org">hola@nouart.org</a>. Nos encantará conocer tu obra.
-		</p>
+		<p class="lead">{site.about}</p>
 	</div>
+
+	<section class="services-block">
+		<h2>Qué hacemos</h2>
+		<div class="services">
+			{#each services as s (s.title)}
+				<article class="service">
+					<h3>{s.title}</h3>
+					<p class="muted">{s.body}</p>
+				</article>
+			{/each}
+		</div>
+	</section>
+
+	<section class="join">
+		<h2>¿Eres artista o vecino de Nou Barris?</h2>
+		<p class="muted">
+			Si haces arte en el distrito o quieres participar en nuestras actividades, nos encantará
+			conocerte. Escríbenos a <a href="mailto:{contact.email}">{contact.email}</a> o desde la
+			página de <a href="/contacto">contacto</a>.
+		</p>
+		<a href="/contacto" class="btn btn-primary">Contacta con nosotros</a>
+	</section>
 </div>
 
 <style>
 	.page { padding: 2.5rem 0; }
-	.prose { max-width: 62ch; }
+	.prose { max-width: 64ch; }
 	.lead { font-size: 1.25rem; }
-	.prose h2 { margin-top: 2rem; }
-	.prose ul { padding-left: 1.2rem; }
-	.prose li { margin-bottom: 0.4rem; }
-	.prose a { color: var(--accent); text-decoration: underline; }
+	.services-block { margin-top: 3rem; }
+	.services-block h2, .join h2 { margin-bottom: 1.2rem; }
+	.services { display: grid; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+	.service { padding: 1.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+	.service::before { content: ''; display: block; width: 34px; height: 3px; background: var(--accent); border-radius: 2px; margin-bottom: 1rem; }
+	.service h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
+	.join { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); max-width: 64ch; }
+	.join a { color: var(--accent); text-decoration: underline; }
+	.join .btn { margin-top: 0.5rem; }
 </style>

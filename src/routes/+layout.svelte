@@ -24,7 +24,8 @@
 		{ href: '/', label: 'Inicio' },
 		{ href: '/galeria', label: 'Galería' },
 		{ href: '/artistas', label: 'Artistas' },
-		{ href: '/sobre', label: 'Sobre Nou Art' }
+		{ href: '/sobre', label: 'Sobre' },
+		{ href: '/contacto', label: 'Contacto' }
 	];
 	const path = $derived(page.url.pathname);
 </script>
@@ -68,6 +69,7 @@
 			<a href="/galeria">Galería</a>
 			<a href="/artistas">Artistas</a>
 			<a href="/sobre">Sobre nosotros</a>
+			<a href="/contacto">Contacto</a>
 			<a href="/admin" class="muted">Acceso gestión</a>
 		</div>
 	</div>
