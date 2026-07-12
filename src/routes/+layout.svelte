@@ -112,6 +112,12 @@
 	<div class="menu-foot muted">{site.name} · {contact.location}</div>
 </div>
 
+<!-- Móvil: envoltura ÚNICA de cristal (.frame-glass) + línea de borde (.frame).
+     Ambas STICKY de 100dvh → ventana enmarcada fija mientras hay contenido; se
+     libera al final para que el footer quede por debajo del nav inferior. -->
+<div class="frame-glass" aria-hidden="true"></div>
+<div class="frame" aria-hidden="true"></div>
+
 <header class="site-header">
 	<div class="wrap header-inner">
 		<!-- Escritorio -->
@@ -138,16 +144,37 @@
 	</div>
 </header>
 
-<!-- Marco del móvil (2 capas, cada una una sola figura → esquinas limpias):
-     .frame-glass = cristal (blur, mismo material que el nav) · .frame = líneas del borde -->
-<div class="frame-glass" aria-hidden="true"></div>
-<div class="frame" aria-hidden="true"></div>
-
-<div class="scroll">
 <main>
 	{@render children()}
 </main>
 
+<!-- Móvil: barra inferior (botones circulares a la derecha) -->
+<div class="mobile-bar">
+	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
+		{theme === 'dark' ? '☀' : '☾'}
+	</button>
+	<a class="icon-btn" href="/admin" aria-label="Perfil / gestión" title="Perfil">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="8" r="3.4" />
+			<path d="M5.5 20c1.2-3.4 3.8-5 6.5-5s5.3 1.6 6.5 5" />
+		</svg>
+	</a>
+	<button class="icon-btn" onclick={share} aria-label="Compartir enlace" title="Compartir">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="18" cy="5" r="2.6" />
+			<circle cx="6" cy="12" r="2.6" />
+			<circle cx="18" cy="19" r="2.6" />
+			<path d="M8.3 13.3l7.4 4.4M15.7 6.3l-7.4 4.4" />
+		</svg>
+	</button>
+	<button class="icon-btn" onclick={() => (menuOpen = true)} aria-label="Abrir menú" title="Menú">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+			<path d="M4 7h16M4 12h16M4 17h16" />
+		</svg>
+	</button>
+</div>
+
+<!-- Footer: en móvil queda POR DEBAJO del nav inferior y marca el final del contenido. -->
 <footer class="site-footer">
 	<div class="wrap footer-grid">
 		<div class="foot-brand">
@@ -180,33 +207,6 @@
 		<span class="muted">Nou Barris, Barcelona</span>
 	</div>
 </footer>
-</div>
-
-<!-- Móvil: barra inferior (botones circulares a la derecha) -->
-<div class="mobile-bar">
-	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
-		{theme === 'dark' ? '☀' : '☾'}
-	</button>
-	<a class="icon-btn" href="/admin" aria-label="Perfil / gestión" title="Perfil">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<circle cx="12" cy="8" r="3.4" />
-			<path d="M5.5 20c1.2-3.4 3.8-5 6.5-5s5.3 1.6 6.5 5" />
-		</svg>
-	</a>
-	<button class="icon-btn" onclick={share} aria-label="Compartir enlace" title="Compartir">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<circle cx="18" cy="5" r="2.6" />
-			<circle cx="6" cy="12" r="2.6" />
-			<circle cx="18" cy="19" r="2.6" />
-			<path d="M8.3 13.3l7.4 4.4M15.7 6.3l-7.4 4.4" />
-		</svg>
-	</button>
-	<button class="icon-btn" onclick={() => (menuOpen = true)} aria-label="Abrir menú" title="Menú">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-			<path d="M4 7h16M4 12h16M4 17h16" />
-		</svg>
-	</button>
-</div>
 
 {#if toast}<div class="toast" role="status">{toast}</div>{/if}
 
@@ -245,9 +245,6 @@
 	.topbar, .mobile-bar, .frame, .frame-glass { display: none; }
 
 	main { min-height: 70vh; }
-	/* Contenedor de scroll: transparente en escritorio (el layout fluye normal);
-	   en móvil se convierte en el área scrolleable del app-shell. */
-	.scroll { display: contents; }
 
 	/* --- Footer profesional --- */
 	.site-footer { border-top: 1px solid var(--line); margin-top: 4rem; padding: 3rem 0 1.5rem; background: var(--surface); }
@@ -301,25 +298,52 @@
 		.menu-overlay, .menu-nav a { transition: opacity 0.15s ease, visibility 0.15s; transform: none !important; }
 	}
 
-	/* ===================== MÓVIL: marco ===================== */
+	/* ===================== MÓVIL: ventana enmarcada ===================== */
 	@media (max-width: 820px) {
 		.brand, .desk-nav, .theme-desktop { display: none; }
 
-		/* App-shell: la app ocupa el viewport dinámico (100dvh) y el contenido hace
-		   scroll POR DENTRO → los navs y el marco no dependen de la barra de URL del
-		   navegador (que aparece/desaparece), así nunca se descuadran. */
-		:global(body) { height: 100vh; height: 100dvh; overflow: hidden; position: relative; }
-		/* El contenido scrollea aquí; header/barra/marco son capas absolutas que se
-		   SUPERPONEN a este scroll → los navs desenfocan el contenido igual que el marco. */
-		.scroll {
-			position: absolute; inset: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
-			display: flex; flex-direction: column;
-			padding: 78px 1.7rem 90px;
-		}
-		.scroll :global(.wrap) { padding-left: 0; padding-right: 0; }
+		/* Scroll de PÁGINA normal (sin app-shell). La ventana enmarcada (cristal + navs)
+		   es una capa STICKY de 100dvh: se mantiene fija en pantalla mientras hay
+		   contenido y se libera al final → el footer queda por DEBAJO del nav inferior.
+		   El alto es fijo (100dvh) → el marco no se deforma. */
+		:global(body) { overflow-x: hidden; }
 
-		/* barra superior (glass, se superpone al contenido) */
-		.site-header { position: absolute; top: 0; left: 0; right: 0; z-index: 20; border-bottom: 0; }
+		/* ENVOLTURA ÚNICA de cristal (100dvh, sticky). Se recorta con padding +
+		   mask-composite:exclude dejando un hueco central para el contenido. El borde
+		   resultante = nav superior (60px) + nav inferior (74px) + paredes (14px), TODO
+		   el mismo cristal y un solo backdrop-filter → una pieza continua, sin costuras.
+		   margin-bottom:-100dvh → no ocupa flujo (el contenido se superpone por debajo). */
+		.frame-glass {
+			display: block; position: sticky; top: 0; z-index: 10; pointer-events: none;
+			height: 100dvh; margin-bottom: -100dvh;
+			padding: 60px 14px 74px 14px;
+			background: color-mix(in srgb, var(--bg) 88%, transparent);
+			-webkit-backdrop-filter: blur(12px);
+			backdrop-filter: blur(12px);
+			-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+			-webkit-mask-composite: xor;
+			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+			mask-composite: exclude;
+		}
+		/* Línea del borde interior (esquinas curvas), también sticky 100dvh. El ::after
+		   ocupa el hueco central y dibuja el rectángulo redondeado. */
+		.frame {
+			display: block; position: sticky; top: 0; z-index: 12; pointer-events: none;
+			height: 100dvh; margin-bottom: -100dvh;
+			padding: 60px 14px 74px 14px;
+		}
+		.frame::after {
+			content: ''; display: block; height: 100%;
+			border: 1px solid var(--line); border-radius: 16px;
+		}
+
+		/* barra superior: sticky arriba, SIN cristal propio (lo pone la envoltura).
+		   margin-bottom:-60px → no ocupa flujo; el contenido arranca en lo alto. */
+		.site-header {
+			position: sticky; top: 0; z-index: 20; height: 60px; margin-bottom: -60px;
+			border-bottom: 0;
+			background: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+		}
 		.header-inner { height: 60px; }
 		.topbar {
 			display: flex; align-items: center; gap: 0.6rem; width: 100%;
@@ -329,49 +353,28 @@
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; margin: 0 0.45rem; }
 
-		/* Marco entre el nav superior (60px) y el inferior (74px). Dos capas, cada una
-		   UNA sola figura → esquinas siempre limpias. */
-		/* Capa 1: cristal (anillo de 9px con el MISMO material que el nav: frosted+blur).
-		   bottom:73 = solapa 1px la barra inferior → sin gap. */
-		.frame-glass {
-			display: block; position: absolute; z-index: 14; pointer-events: none;
-			top: 58px; bottom: 72px; left: 0; right: 0;
-			padding: 9px 14px; border-radius: 16px;
-			background: color-mix(in srgb, var(--bg) 88%, transparent);
-			-webkit-backdrop-filter: blur(10px);
-			backdrop-filter: blur(10px);
-			-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-			-webkit-mask-composite: xor;
-			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-			mask-composite: exclude;
-		}
-		/* Capa 2: SOLO el borde interno (límite del marco con el contenido).
-		   Alineado con el borde interior del cristal (lados 14px, top/bottom 9px). */
-		.frame {
-			display: block; position: absolute; z-index: 16; pointer-events: none;
-			top: 67px; bottom: 81px; left: 14px; right: 14px;
-			border: 1px solid var(--line); border-radius: 8px;
-		}
-		main { flex: 1 0 auto; padding: 0; }
-		.site-footer { margin-top: 0; padding: 2rem 0; }
+		/* contenido dentro del marco: hueco arriba (nav) y abajo (nav) + gutter lateral */
+		main { padding: 78px 1.7rem 96px; }
+		main :global(.wrap) { padding-left: 0; padding-right: 0; }
 
+		/* barra inferior: sticky abajo, transparente. margin-top:-74px → se aloja en el
+		   padding inferior de main; al llegar al final se libera y el footer aparece. */
 		.mobile-bar {
-			position: absolute; bottom: 0; left: 0; right: 0; z-index: 20; height: 74px;
+			position: sticky; bottom: 0; z-index: 20; height: 74px; margin-top: -74px;
 			display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
 			padding: 0 1rem;
-			background: color-mix(in srgb, var(--bg) 92%, transparent);
-			-webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-top: 0;
+			background: none; -webkit-backdrop-filter: none; backdrop-filter: none; border-top: 0;
 		}
 		/* botones del nav inferior del mismo tamaño que la X del menú (46px) */
 		.mobile-bar .icon-btn { width: 46px; height: 46px; font-size: 1.35rem; }
+
+		/* footer: por DEBAJO del nav inferior, marca el final del contenido */
+		.site-footer { margin-top: 0; padding: 2.2rem 0 2.6rem; }
 	}
 
-	/* Footer responsive */
+	/* Footer responsive: dos columnas en móvil (marca a ancho completo). */
 	@media (max-width: 720px) {
 		.footer-grid { grid-template-columns: 1fr 1fr; gap: 1.6rem 1.2rem; }
 		.foot-brand { grid-column: 1 / -1; }
-	}
-	@media (max-width: 420px) {
-		.footer-grid { grid-template-columns: 1fr; }
 	}
 </style>
