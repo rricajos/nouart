@@ -55,20 +55,27 @@ export const actions: Actions = {
 		return { liked: true, likes: likeCount(artwork.id) };
 	},
 
-	comment: async ({ params, request }) => {
+	comment: async ({ params, request, locals }) => {
 		const artwork = getArtworkBySlug(params.slug);
 		if (!artwork) return fail(404);
 		const form = await request.formData();
 		// Honeypot: bots fill hidden fields.
 		if (form.get('website')) return { commented: true };
-		const author = String(form.get('author') ?? '').trim();
 		const body = String(form.get('body') ?? '').trim();
-		if (author.length < 2 || body.length < 2) {
-			return fail(400, { commentError: 'Escribe tu nombre y un comentario.' });
+		if (body.length < 2) return fail(400, { commentError: 'Escribe un comentario.' });
+		if (body.length > 1000) return fail(400, { commentError: 'El comentario es demasiado largo.' });
+
+		if (locals.user) {
+			// Usuario con sesión: se publica al momento y queda atribuido a su cuenta.
+			db.prepare(
+				`INSERT INTO comments (artwork_id, author, body, approved, user_id) VALUES (?, ?, ?, 1, ?)`
+			).run(artwork.id, locals.user.name, body, locals.user.id);
+			return { commented: true, published: true };
 		}
-		if (author.length > 60 || body.length > 1000) {
-			return fail(400, { commentError: 'El texto es demasiado largo.' });
-		}
+
+		const author = String(form.get('author') ?? '').trim();
+		if (author.length < 2) return fail(400, { commentError: 'Escribe tu nombre y un comentario.' });
+		if (author.length > 60) return fail(400, { commentError: 'El nombre es demasiado largo.' });
 		db.prepare(`INSERT INTO comments (artwork_id, author, body) VALUES (?, ?, ?)`).run(
 			artwork.id,
 			author,

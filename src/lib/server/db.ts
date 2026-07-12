@@ -67,10 +67,40 @@ CREATE TABLE IF NOT EXISTS messages (
 	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS users (
+	id          INTEGER PRIMARY KEY AUTOINCREMENT,
+	name        TEXT NOT NULL,
+	email       TEXT NOT NULL UNIQUE,
+	password    TEXT NOT NULL,                    -- scrypt: salt:hash
+	role        TEXT NOT NULL DEFAULT 'member',   -- member | artist
+	artist_id   INTEGER REFERENCES artists(id) ON DELETE SET NULL,
+	approved    INTEGER NOT NULL DEFAULT 1,       -- artistas arrancan 0 (pendientes)
+	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+	token       TEXT PRIMARY KEY,
+	user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	expires_at  INTEGER NOT NULL,                 -- unix seconds
+	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE INDEX IF NOT EXISTS idx_artworks_artist ON artworks(artist_id);
 CREATE INDEX IF NOT EXISTS idx_comments_artwork ON comments(artwork_id);
 CREATE INDEX IF NOT EXISTS idx_messages_artist ON messages(artist_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 `);
+
+// Migraciones idempotentes para BD ya existentes (CREATE TABLE IF NOT EXISTS no añade
+// columnas nuevas a tablas viejas). ADD COLUMN lanza si ya existe → lo ignoramos.
+function addColumn(sql: string) {
+	try {
+		db.exec(sql);
+	} catch {
+		/* la columna ya existe */
+	}
+}
+addColumn(`ALTER TABLE comments ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL`);
 
 export interface Artist {
 	id: number;
@@ -105,6 +135,20 @@ export interface Comment {
 	artwork_id: number;
 	author: string;
 	body: string;
+	approved: number;
+	user_id: number | null;
+	created_at: string;
+}
+
+export type Role = 'member' | 'artist';
+
+export interface User {
+	id: number;
+	name: string;
+	email: string;
+	password: string;
+	role: Role;
+	artist_id: number | null;
 	approved: number;
 	created_at: string;
 }

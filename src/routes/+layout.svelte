@@ -4,7 +4,8 @@
 	import { page } from '$app/state';
 	import { afterNavigate } from '$app/navigation';
 	import { site, contact } from '$lib/content';
-	let { children } = $props();
+	let { children, data } = $props();
+	const user = $derived(data.user);
 
 	let theme = $state<'light' | 'dark' | null>(null);
 	let menuOpen = $state(false);
@@ -143,6 +144,18 @@
 			</a>
 		{/each}
 	</nav>
+	<div class="menu-auth">
+		{#if user}
+			<a href="/account" class="ma-link" onclick={() => (menuOpen = false)}>Mi cuenta</a>
+			{#if user.role === 'artist'}
+				<a href="/studio" class="ma-link" onclick={() => (menuOpen = false)}>Mi estudio</a>
+			{/if}
+			<form method="POST" action="/logout"><button type="submit" class="ma-link ma-btn">Cerrar sesión</button></form>
+		{:else}
+			<a href="/login" class="ma-link" onclick={() => (menuOpen = false)}>Entrar</a>
+			<a href="/register" class="ma-link ma-cta" onclick={() => (menuOpen = false)}>Crear cuenta</a>
+		{/if}
+	</div>
 	<div class="menu-foot muted">{site.name} · {contact.location}</div>
 </div>
 
@@ -165,6 +178,9 @@
 			{#each nav as item (item.href)}
 				<a href={item.href} class="navlink" class:active={isActive(item.href)}>{item.label}</a>
 			{/each}
+			<a href={user ? '/account' : '/login'} class="navlink acct" class:active={isActive('/account')}>
+				{user ? 'Mi cuenta' : 'Entrar'}
+			</a>
 		</nav>
 		<button class="icon-btn theme-desktop" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
 			{theme === 'dark' ? '☀' : '☾'}
@@ -225,7 +241,7 @@
 	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
 		{theme === 'dark' ? '☀' : '☾'}
 	</button>
-	<a class="icon-btn" href="/admin" aria-label="Perfil / gestión" title="Perfil">
+	<a class="icon-btn" href={user ? '/account' : '/login'} aria-label={user ? 'Mi cuenta' : 'Entrar'} title={user ? 'Mi cuenta' : 'Entrar'}>
 		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 			<circle cx="12" cy="8" r="3.4" />
 			<path d="M5.5 20c1.2-3.4 3.8-5 6.5-5s5.3 1.6 6.5 5" />
@@ -344,7 +360,17 @@
 	.menu-overlay.open .menu-nav a:nth-child(3) { transition-delay: 0.16s; }
 	.menu-overlay.open .menu-nav a:nth-child(4) { transition-delay: 0.21s; }
 	.menu-overlay.open .menu-nav a:nth-child(5) { transition-delay: 0.26s; }
-	.menu-foot { text-align: center; padding: 1.5rem; font-size: 0.9rem; }
+	.menu-auth { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 1.4rem; padding: 0.5rem 1rem 0.2rem; }
+	.menu-auth .ma-link {
+		font-family: var(--sans); font-size: 1rem; color: var(--muted); font-weight: 500;
+		background: none; border: 0; cursor: pointer; padding: 0.3rem 0; font: inherit;
+	}
+	.menu-auth .ma-link:hover { color: var(--accent); }
+	.menu-auth .ma-cta { color: var(--accent); font-weight: 600; }
+	.menu-auth .ma-btn { font-size: 1rem; }
+	.menu-auth form { margin: 0; }
+	.acct { color: var(--text); }
+	.menu-foot { text-align: center; padding: 1.2rem 1.5rem 1.5rem; font-size: 0.9rem; }
 
 	@media (prefers-reduced-motion: reduce) {
 		.menu-overlay, .menu-nav a { transition: opacity 0.15s ease, visibility 0.15s; transform: none !important; }

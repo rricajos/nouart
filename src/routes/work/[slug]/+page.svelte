@@ -110,16 +110,26 @@
 
 		<div class="comment-form">
 			{#if form?.commented}
-				<div class="flash flash-ok">¡Gracias! Tu comentario se publicará tras revisarlo.</div>
+				<div class="flash flash-ok">
+					{form.published ? '¡Gracias! Tu comentario ya está publicado.' : '¡Gracias! Tu comentario se publicará tras revisarlo.'}
+				</div>
 			{:else}
 				<h3>Deja tu opinión</h3>
 				<form method="POST" action="?/comment" use:enhance>
 					{#if form?.commentError}<div class="flash flash-err">{form.commentError}</div>{/if}
 					<input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
-					<div class="field"><label for="cm-author">Nombre</label><input id="cm-author" name="author" required maxlength="60" /></div>
+					{#if data.user}
+						<p class="as muted">Comentas como <strong>{data.user.name}</strong></p>
+					{:else}
+						<div class="field"><label for="cm-author">Nombre</label><input id="cm-author" name="author" required maxlength="60" /></div>
+					{/if}
 					<div class="field"><label for="cm-body">Comentario</label><textarea id="cm-body" name="body" rows="3" required maxlength="1000"></textarea></div>
 					<button class="btn btn-primary">Publicar</button>
-					<p class="muted note">Los comentarios se revisan antes de publicarse.</p>
+					{#if data.user}
+						<p class="muted note">Se publica al instante.</p>
+					{:else}
+						<p class="muted note">Los comentarios se revisan antes de publicarse. <a href="/login">Entra</a> para publicar al instante.</p>
+					{/if}
 				</form>
 			{/if}
 		</div>
@@ -159,6 +169,8 @@
 	.date { font-size: 0.82rem; }
 	.comment-form { background: var(--surface-2); border-radius: var(--radius); padding: 1.3rem; }
 	.comment-form h3 { margin-bottom: 0.9rem; }
+	.comment-form .as { margin: 0 0 0.8rem; font-size: 0.95rem; }
+	.comment-form .note a { color: var(--accent); text-decoration: underline; }
 	.note { font-size: 0.82rem; margin: 0.6rem 0 0; }
 	@media (max-width: 820px) {
 		.layout { grid-template-columns: 1fr; }

@@ -10,5 +10,10 @@ export const load: LayoutServerLoad = ({ locals, url }) => {
 	const unreadMessages = (
 		db.prepare(`SELECT COUNT(*) AS n FROM messages WHERE handled = 0`).get() as { n: number }
 	).n;
-	return { pendingComments, unreadMessages, pathname: url.pathname };
+	const pendingArtists = (
+		db
+			.prepare(`SELECT COUNT(*) AS n FROM users WHERE role = 'artist' AND approved = 0`)
+			.get() as { n: number }
+	).n;
+	return { pendingComments, unreadMessages, pendingArtists, pathname: url.pathname };
 };

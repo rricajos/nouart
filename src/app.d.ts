@@ -5,6 +5,7 @@ declare global {
 		// interface Error {}
 		interface Locals {
 			admin: boolean;
+			user: import('$lib/server/users').SessionUser | null;
 		}
 		// interface PageData {}
 		// interface PageState {}

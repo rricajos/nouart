@@ -7,7 +7,8 @@
 		{ href: '/admin/artists', label: 'Artistas' },
 		{ href: '/admin/works', label: 'Obras' },
 		{ href: '/admin/comments', label: 'Comentarios', badge: data.pendingComments },
-		{ href: '/admin/messages', label: 'Mensajes', badge: data.unreadMessages }
+		{ href: '/admin/messages', label: 'Mensajes', badge: data.unreadMessages },
+		{ href: '/admin/users', label: 'Usuarios', badge: data.pendingArtists }
 	]);
 	const path = $derived(page.url.pathname);
 </script>
