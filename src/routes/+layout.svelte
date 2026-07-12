@@ -315,12 +315,13 @@
 		.scroller { display: block; position: relative; }
 
 		/* TODO el chrome (cristal + marco + título + iconos) vive en .chrome: UNA capa
-		   sticky de 100dvh. Al ser una sola unidad, el nav superior, el marco y el nav
-		   inferior van SIEMPRE juntos y se liberan a la vez al llegar al footer.
+		   sticky de 100dvh. Anclado a bottom:0 → el nav inferior se queda PEGADO al fondo
+		   y, al llegar el final, es el footer quien lo empuja hacia arriba (el nav se
+		   queda "en el top del footer"). Todo va como una sola unidad, sin desincronizarse.
 		   margin-bottom:-100dvh → no ocupa flujo (el contenido se superpone por debajo).
 		   Alto fijo 100dvh → el marco no se deforma. */
 		.chrome {
-			display: block; position: sticky; top: 0; z-index: 10; pointer-events: none;
+			display: block; position: sticky; bottom: 0; z-index: 10; pointer-events: none;
 			height: 100dvh; margin-bottom: -100dvh;
 		}
 
