@@ -340,9 +340,11 @@
 		.frame-glass {
 			display: block; position: absolute; inset: 0; z-index: 5; pointer-events: none;
 			padding: 60px 14px 74px 14px;
-			background: color-mix(in srgb, var(--bg) 88%, transparent);
-			-webkit-backdrop-filter: blur(12px);
-			backdrop-filter: blur(12px);
+			/* Más translúcido (62%) para que el cristal muestre lo que pasa por detrás:
+			   contenido difuminado o el panel oscuro del footer → efecto glass visible. */
+			background: color-mix(in srgb, var(--bg) 62%, transparent);
+			-webkit-backdrop-filter: blur(16px) saturate(1.2);
+			backdrop-filter: blur(16px) saturate(1.2);
 			-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			-webkit-mask-composite: xor;
 			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -388,9 +390,11 @@
 		main { flex: 1 0 auto; padding: 78px 1.7rem 1.4rem; }
 		main :global(.wrap) { padding-left: 0; padding-right: 0; }
 
-		/* footer: último bloque del scroll; el padding inferior deja su contenido por
-		   encima del nav inferior (el panel oscuro se extiende tras el cristal del nav). */
-		.site-footer { margin-top: 0; padding: 2.2rem 0 6rem; }
+		/* footer: fondo oscuro a ANCHO COMPLETO (se extiende tras las paredes y el nav →
+		   el cristal lo muestra difuminado). El padding del contenido lo mantiene fuera
+		   del marco (lados) y del nav inferior (abajo) para que nada quede tapado. */
+		.site-footer { margin-top: 0; padding: 2.4rem 0 6.5rem; }
+		.site-footer :global(.wrap) { padding-left: 2.1rem; padding-right: 2.1rem; }
 	}
 
 	/* Footer responsive: dos columnas en móvil (marca a ancho completo). */
