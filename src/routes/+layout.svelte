@@ -112,9 +112,12 @@
 	<div class="menu-foot muted">{site.name} · {contact.location}</div>
 </div>
 
-<!-- Móvil: envoltura ÚNICA de cristal (.frame-glass) + línea de borde (.frame).
-     Ambas STICKY de 100dvh → ventana enmarcada fija mientras hay contenido; se
-     libera al final para que el footer quede por debajo del nav inferior. -->
+<!-- Móvil: TODO el chrome (cristal + marco + título + iconos) en un único contenedor
+     STICKY de 100dvh → nav superior, marco y nav inferior van SIEMPRE juntos y se
+     liberan como una sola unidad al llegar al footer. En escritorio .chrome es
+     display:contents (no afecta al layout). -->
+<div class="scroller">
+<div class="chrome">
 <div class="frame-glass" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
 
@@ -144,10 +147,6 @@
 	</div>
 </header>
 
-<main>
-	{@render children()}
-</main>
-
 <!-- Móvil: barra inferior (botones circulares a la derecha) -->
 <div class="mobile-bar">
 	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
@@ -173,6 +172,12 @@
 		</svg>
 	</button>
 </div>
+</div><!-- /.chrome -->
+
+<main>
+	{@render children()}
+</main>
+</div><!-- /.scroller -->
 
 <!-- Footer: en móvil queda POR DEBAJO del nav inferior y marca el final del contenido. -->
 <footer class="site-footer">
@@ -243,6 +248,8 @@
 
 	/* elementos sólo-móvil ocultos en escritorio */
 	.topbar, .mobile-bar, .frame, .frame-glass { display: none; }
+	/* En escritorio estos contenedores son transparentes (sus hijos fluyen normal). */
+	.scroller, .chrome { display: contents; }
 
 	main { min-height: 70vh; }
 
@@ -302,20 +309,27 @@
 	@media (max-width: 820px) {
 		.brand, .desk-nav, .theme-desktop { display: none; }
 
-		/* Scroll de PÁGINA normal (sin app-shell). La ventana enmarcada (cristal + navs)
-		   es una capa STICKY de 100dvh: se mantiene fija en pantalla mientras hay
-		   contenido y se libera al final → el footer queda por DEBAJO del nav inferior.
-		   El alto es fijo (100dvh) → el marco no se deforma. */
-		:global(body) { overflow-x: hidden; }
+		/* Scroll de PÁGINA normal. .scroller envuelve chrome + contenido; su fondo = inicio
+		   del footer. Acota el sticky del chrome para que se LIBERE justo al llegar al
+		   footer (sube entero y deja el footer debajo del nav inferior). */
+		.scroller { display: block; position: relative; }
 
-		/* ENVOLTURA ÚNICA de cristal (100dvh, sticky). Se recorta con padding +
-		   mask-composite:exclude dejando un hueco central para el contenido. El borde
-		   resultante = nav superior (60px) + nav inferior (74px) + paredes (14px), TODO
-		   el mismo cristal y un solo backdrop-filter → una pieza continua, sin costuras.
-		   margin-bottom:-100dvh → no ocupa flujo (el contenido se superpone por debajo). */
-		.frame-glass {
+		/* TODO el chrome (cristal + marco + título + iconos) vive en .chrome: UNA capa
+		   sticky de 100dvh. Al ser una sola unidad, el nav superior, el marco y el nav
+		   inferior van SIEMPRE juntos y se liberan a la vez al llegar al footer.
+		   margin-bottom:-100dvh → no ocupa flujo (el contenido se superpone por debajo).
+		   Alto fijo 100dvh → el marco no se deforma. */
+		.chrome {
 			display: block; position: sticky; top: 0; z-index: 10; pointer-events: none;
 			height: 100dvh; margin-bottom: -100dvh;
+		}
+
+		/* ENVOLTURA ÚNICA de cristal: rellena .chrome y se recorta (padding +
+		   mask-composite:exclude) dejando un hueco central. El borde resultante = nav
+		   superior (60px) + nav inferior (74px) + paredes (14px), TODO el mismo cristal
+		   y un solo backdrop-filter → una pieza continua, sin costuras. */
+		.frame-glass {
+			display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none;
 			padding: 60px 14px 74px 14px;
 			background: color-mix(in srgb, var(--bg) 88%, transparent);
 			-webkit-backdrop-filter: blur(12px);
@@ -325,11 +339,9 @@
 			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			mask-composite: exclude;
 		}
-		/* Línea del borde interior (esquinas curvas), también sticky 100dvh. El ::after
-		   ocupa el hueco central y dibuja el rectángulo redondeado. */
+		/* Línea del borde interior (esquinas curvas). El ::after ocupa el hueco central. */
 		.frame {
-			display: block; position: sticky; top: 0; z-index: 12; pointer-events: none;
-			height: 100dvh; margin-bottom: -100dvh;
+			display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none;
 			padding: 60px 14px 74px 14px;
 		}
 		.frame::after {
@@ -337,11 +349,10 @@
 			border: 1px solid var(--line); border-radius: 16px;
 		}
 
-		/* barra superior: sticky arriba, SIN cristal propio (lo pone la envoltura).
-		   margin-bottom:-60px → no ocupa flujo; el contenido arranca en lo alto. */
+		/* barra superior: dentro de .chrome, SIN cristal propio (lo pone la envoltura). */
 		.site-header {
-			position: sticky; top: 0; z-index: 20; height: 60px; margin-bottom: -60px;
-			border-bottom: 0;
+			position: absolute; top: 0; left: 0; right: 0; z-index: 3; height: 60px;
+			border-bottom: 0; pointer-events: auto;
 			background: none; -webkit-backdrop-filter: none; backdrop-filter: none;
 		}
 		.header-inner { height: 60px; }
@@ -353,20 +364,21 @@
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; margin: 0 0.45rem; }
 
-		/* contenido dentro del marco: hueco arriba (nav) y abajo (nav) + gutter lateral */
-		main { padding: 78px 1.7rem 96px; }
-		main :global(.wrap) { padding-left: 0; padding-right: 0; }
-
-		/* barra inferior: sticky abajo, transparente. margin-top:-74px → se aloja en el
-		   padding inferior de main; al llegar al final se libera y el footer aparece. */
+		/* barra inferior: dentro de .chrome, transparente. Va junto al cristal → se
+		   libera con toda la ventana al llegar al footer. */
 		.mobile-bar {
-			position: sticky; bottom: 0; z-index: 20; height: 74px; margin-top: -74px;
+			position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; height: 74px;
+			pointer-events: auto;
 			display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
 			padding: 0 1rem;
 			background: none; -webkit-backdrop-filter: none; backdrop-filter: none; border-top: 0;
 		}
 		/* botones del nav inferior del mismo tamaño que la X del menú (46px) */
 		.mobile-bar .icon-btn { width: 46px; height: 46px; font-size: 1.35rem; }
+
+		/* contenido: se superpone bajo el chrome; hueco arriba (nav) y abajo (nav) + gutter */
+		main { padding: 78px 1.7rem 96px; }
+		main :global(.wrap) { padding-left: 0; padding-right: 0; }
 
 		/* footer: por DEBAJO del nav inferior, marca el final del contenido */
 		.site-footer { margin-top: 0; padding: 2.2rem 0 2.6rem; }
