@@ -112,10 +112,11 @@
 	<div class="menu-foot muted">{site.name} · {contact.location}</div>
 </div>
 
-<!-- Móvil: TODO el chrome (cristal + marco + título + iconos) en un único contenedor
-     STICKY de 100dvh → nav superior, marco y nav inferior van SIEMPRE juntos y se
-     liberan como una sola unidad al llegar al footer. En escritorio .chrome es
-     display:contents (no afecta al layout). -->
+<!-- Móvil: .viewport es el ÚNICO que scrollea (la raíz/body no) → la barra de URL del
+     navegador no aparece/desaparece, así el 100dvh del marco es estable y no se descuadra.
+     Dentro va el .scroller (chrome sticky + contenido) y el footer, conservando el
+     footer-bajo-el-nav. En escritorio .viewport/.scroller/.chrome son display:contents. -->
+<div class="viewport">
 <div class="scroller">
 <div class="chrome">
 <div class="frame-glass" aria-hidden="true"></div>
@@ -212,6 +213,7 @@
 		<span class="muted">Nou Barris, Barcelona</span>
 	</div>
 </footer>
+</div><!-- /.viewport -->
 
 {#if toast}<div class="toast" role="status">{toast}</div>{/if}
 
@@ -249,7 +251,7 @@
 	/* elementos sólo-móvil ocultos en escritorio */
 	.topbar, .mobile-bar, .frame, .frame-glass { display: none; }
 	/* En escritorio estos contenedores son transparentes (sus hijos fluyen normal). */
-	.scroller, .chrome { display: contents; }
+	.viewport, .scroller, .chrome { display: contents; }
 
 	main { min-height: 70vh; }
 
@@ -321,9 +323,20 @@
 	@media (max-width: 820px) {
 		.brand, .desk-nav, .theme-desktop { display: none; }
 
-		/* Scroll de PÁGINA normal. .scroller envuelve chrome + contenido; su fondo = inicio
-		   del footer. Acota el sticky del chrome para que se LIBERE justo al llegar al
-		   footer (sube entero y deja el footer debajo del nav inferior). */
+		/* La RAÍZ (body) no scrollea → la barra de URL del navegador no aparece/desaparece,
+		   por lo que el 100dvh es estable y el marco NO se descuadra al scrollear. */
+		:global(body) { height: 100dvh; overflow: hidden; position: relative; }
+
+		/* .viewport = ÚNICO contenedor scrolleable (scroll interno). Al ser el scroll aquí
+		   dentro y no en la raíz, la barra de URL queda fija. */
+		.viewport {
+			display: block; position: absolute; inset: 0;
+			overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+		}
+
+		/* .scroller envuelve chrome + contenido; su fondo = inicio del footer. Acota el
+		   sticky del chrome para que se LIBERE al llegar al footer (sube entero y deja el
+		   footer debajo del nav inferior). */
 		.scroller { display: block; position: relative; }
 
 		/* TODO el chrome (cristal + marco + título + iconos) vive en .chrome: UNA capa
