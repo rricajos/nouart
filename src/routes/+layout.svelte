@@ -8,6 +8,33 @@
 	let theme = $state<'light' | 'dark' | null>(null);
 	let menuOpen = $state(false);
 
+	// Móvil: cuando el footer (panel oscuro) domina la pantalla, el marco y los navs se
+	// funden en oscuro (texto/iconos claros) → sin banda gris lavada. Lo detecta el scroll
+	// del contenedor interno (.viewport).
+	let viewportEl = $state<HTMLElement>();
+	let footerEl = $state<HTMLElement>();
+	let atFooter = $state(false);
+
+	$effect(() => {
+		const vp = viewportEl;
+		const foot = footerEl;
+		if (!vp || !foot) return;
+		let raf = 0;
+		const check = () => {
+			raf = 0;
+			atFooter = foot.getBoundingClientRect().top < window.innerHeight * 0.5;
+		};
+		const onScroll = () => {
+			if (!raf) raf = requestAnimationFrame(check);
+		};
+		vp.addEventListener('scroll', onScroll, { passive: true });
+		check();
+		return () => {
+			vp.removeEventListener('scroll', onScroll);
+			if (raf) cancelAnimationFrame(raf);
+		};
+	});
+
 	$effect(() => {
 		const saved = localStorage.getItem('nouart-theme') as 'light' | 'dark' | null;
 		theme = saved;
@@ -117,10 +144,10 @@
      aunque togglee, los overlays se anclan por bordes (top/bottom, SIN dvh en offsets)
      → cero descuadre. El footer va DENTRO del scroll (último bloque, sobre el nav).
      En escritorio .viewport es display:contents y todo fluye normal. -->
-<div class="frame-glass" aria-hidden="true"></div>
-<div class="frame" aria-hidden="true"></div>
+<div class="frame-glass" class:atfooter={atFooter} aria-hidden="true"></div>
+<div class="frame" class:atfooter={atFooter} aria-hidden="true"></div>
 
-<header class="site-header">
+<header class="site-header" class:atfooter={atFooter}>
 	<div class="wrap header-inner">
 		<!-- Escritorio -->
 		<a href="/" class="brand">
@@ -146,13 +173,13 @@
 	</div>
 </header>
 
-<div class="viewport">
+<div class="viewport" bind:this={viewportEl}>
 <main>
 	{@render children()}
 </main>
 
 <!-- Footer: último bloque del scroll; en móvil aparece sobre el nav inferior. -->
-<footer class="site-footer">
+<footer class="site-footer" bind:this={footerEl}>
 	<div class="wrap footer-grid">
 		<div class="foot-brand">
 			<div class="foot-logo">
@@ -187,7 +214,7 @@
 </div><!-- /.viewport -->
 
 <!-- Móvil: barra inferior (botones circulares a la derecha) -->
-<div class="mobile-bar">
+<div class="mobile-bar" class:atfooter={atFooter}>
 	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
 		{theme === 'dark' ? '☀' : '☾'}
 	</button>
@@ -340,16 +367,20 @@
 		.frame-glass {
 			display: block; position: absolute; inset: 0; z-index: 5; pointer-events: none;
 			padding: 60px 14px 74px 14px;
-			/* Más translúcido (62%) para que el cristal muestre lo que pasa por detrás:
-			   contenido difuminado o el panel oscuro del footer → efecto glass visible. */
-			background: color-mix(in srgb, var(--bg) 62%, transparent);
+			/* Cristal claro frosted sobre el contenido (muestra el arte difuminado). */
+			background: color-mix(in srgb, var(--bg) 72%, transparent);
 			-webkit-backdrop-filter: blur(16px) saturate(1.2);
 			backdrop-filter: blur(16px) saturate(1.2);
 			-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			-webkit-mask-composite: xor;
 			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			mask-composite: exclude;
+			transition: background 0.3s ease;
 		}
+		/* Al llegar al footer, el cristal se funde en OSCURO con el panel (mismo tono del
+		   footer) → sin banda gris lavada; el marco/nav quedan integrados con el footer. */
+		.frame-glass.atfooter { background: color-mix(in srgb, #17140f 62%, transparent); }
+
 		/* Línea del borde interior (esquinas curvas). El ::after ocupa el hueco central. */
 		.frame {
 			display: block; position: absolute; inset: 0; z-index: 6; pointer-events: none;
@@ -358,13 +389,23 @@
 		.frame::after {
 			content: ''; display: block; height: 100%;
 			border: 1px solid var(--line); border-radius: 16px;
+			transition: border-color 0.3s ease;
 		}
+		.frame.atfooter::after { border-color: rgba(255, 255, 255, 0.14); }
 
 		/* barra superior: overlay anclado arriba, SIN cristal propio (lo pone la envoltura). */
 		.site-header {
 			position: absolute; top: 0; left: 0; right: 0; z-index: 20; height: 60px;
 			border-bottom: 0; pointer-events: auto;
 			background: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+		}
+		/* En el footer, título e iconos en claro para contrastar con el cristal oscuro. */
+		.site-header .topbar { transition: color 0.3s ease; }
+		.site-header.atfooter .topbar { color: #ece7dd; }
+		.site-header.atfooter .sep { color: rgba(236, 231, 221, 0.55); }
+		.mobile-bar .icon-btn { transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease; }
+		.mobile-bar.atfooter .icon-btn {
+			color: #ece7dd; background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.22);
 		}
 		.header-inner { height: 60px; }
 		.topbar {
