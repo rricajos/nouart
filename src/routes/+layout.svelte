@@ -112,13 +112,11 @@
 	<div class="menu-foot muted">{site.name} · {contact.location}</div>
 </div>
 
-<!-- Móvil: .viewport es el ÚNICO que scrollea (la raíz/body no) → la barra de URL del
-     navegador no aparece/desaparece, así el 100dvh del marco es estable y no se descuadra.
-     Dentro va el .scroller (chrome sticky + contenido) y el footer, conservando el
-     footer-bajo-el-nav. En escritorio .viewport/.scroller/.chrome son display:contents. -->
-<div class="viewport">
-<div class="scroller">
-<div class="chrome">
+<!-- Móvil: marco/navs = overlays anclados a los BORDES del shell (body 100dvh, no
+     scrollea). El scroll ocurre en .viewport (interno) → la barra de URL queda fija; y
+     aunque togglee, los overlays se anclan por bordes (top/bottom, SIN dvh en offsets)
+     → cero descuadre. El footer va DENTRO del scroll (último bloque, sobre el nav).
+     En escritorio .viewport es display:contents y todo fluye normal. -->
 <div class="frame-glass" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
 
@@ -148,39 +146,12 @@
 	</div>
 </header>
 
-<!-- Móvil: barra inferior (botones circulares a la derecha) -->
-<div class="mobile-bar">
-	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
-		{theme === 'dark' ? '☀' : '☾'}
-	</button>
-	<a class="icon-btn" href="/admin" aria-label="Perfil / gestión" title="Perfil">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<circle cx="12" cy="8" r="3.4" />
-			<path d="M5.5 20c1.2-3.4 3.8-5 6.5-5s5.3 1.6 6.5 5" />
-		</svg>
-	</a>
-	<button class="icon-btn" onclick={share} aria-label="Compartir enlace" title="Compartir">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<circle cx="18" cy="5" r="2.6" />
-			<circle cx="6" cy="12" r="2.6" />
-			<circle cx="18" cy="19" r="2.6" />
-			<path d="M8.3 13.3l7.4 4.4M15.7 6.3l-7.4 4.4" />
-		</svg>
-	</button>
-	<button class="icon-btn" onclick={() => (menuOpen = true)} aria-label="Abrir menú" title="Menú">
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-			<path d="M4 7h16M4 12h16M4 17h16" />
-		</svg>
-	</button>
-</div>
-</div><!-- /.chrome -->
-
+<div class="viewport">
 <main>
 	{@render children()}
 </main>
-</div><!-- /.scroller -->
 
-<!-- Footer: en móvil queda POR DEBAJO del nav inferior y marca el final del contenido. -->
+<!-- Footer: último bloque del scroll; en móvil aparece sobre el nav inferior. -->
 <footer class="site-footer">
 	<div class="wrap footer-grid">
 		<div class="foot-brand">
@@ -214,6 +185,32 @@
 	</div>
 </footer>
 </div><!-- /.viewport -->
+
+<!-- Móvil: barra inferior (botones circulares a la derecha) -->
+<div class="mobile-bar">
+	<button class="icon-btn" onclick={toggleTheme} aria-label="Cambiar tema" title="Cambiar tema">
+		{theme === 'dark' ? '☀' : '☾'}
+	</button>
+	<a class="icon-btn" href="/admin" aria-label="Perfil / gestión" title="Perfil">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="8" r="3.4" />
+			<path d="M5.5 20c1.2-3.4 3.8-5 6.5-5s5.3 1.6 6.5 5" />
+		</svg>
+	</a>
+	<button class="icon-btn" onclick={share} aria-label="Compartir enlace" title="Compartir">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="18" cy="5" r="2.6" />
+			<circle cx="6" cy="12" r="2.6" />
+			<circle cx="18" cy="19" r="2.6" />
+			<path d="M8.3 13.3l7.4 4.4M15.7 6.3l-7.4 4.4" />
+		</svg>
+	</button>
+	<button class="icon-btn" onclick={() => (menuOpen = true)} aria-label="Abrir menú" title="Menú">
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+			<path d="M4 7h16M4 12h16M4 17h16" />
+		</svg>
+	</button>
+</div>
 
 {#if toast}<div class="toast" role="status">{toast}</div>{/if}
 
@@ -250,8 +247,8 @@
 
 	/* elementos sólo-móvil ocultos en escritorio */
 	.topbar, .mobile-bar, .frame, .frame-glass { display: none; }
-	/* En escritorio estos contenedores son transparentes (sus hijos fluyen normal). */
-	.viewport, .scroller, .chrome { display: contents; }
+	/* En escritorio .viewport es transparente (sus hijos fluyen normal). */
+	.viewport { display: contents; }
 
 	main { min-height: 70vh; }
 
@@ -319,43 +316,29 @@
 		.menu-overlay, .menu-nav a { transition: opacity 0.15s ease, visibility 0.15s; transform: none !important; }
 	}
 
-	/* ===================== MÓVIL: ventana enmarcada ===================== */
+	/* ===================== MÓVIL: shell fijo (app) ===================== */
 	@media (max-width: 820px) {
 		.brand, .desk-nav, .theme-desktop { display: none; }
 
-		/* La RAÍZ (body) no scrollea → la barra de URL del navegador no aparece/desaparece,
-		   por lo que el 100dvh es estable y el marco NO se descuadra al scrollear. */
+		/* La RAÍZ es el shell fijo de 100dvh y NO scrollea → la barra de URL queda fija.
+		   Marco y navs se anclan a los BORDES del shell (top/bottom), SIN dvh en offsets →
+		   aunque la barra togglee, todo re-ancla junto: cero descuadre. */
+		:global(html) { overflow: hidden; }
 		:global(body) { height: 100dvh; overflow: hidden; position: relative; }
 
-		/* .viewport = ÚNICO contenedor scrolleable (scroll interno). Al ser el scroll aquí
-		   dentro y no en la raíz, la barra de URL queda fija. */
+		/* .viewport = ÚNICO contenedor scrolleable (scroll interno). El footer es su último
+		   bloque. flex-column + main flex:1 → en páginas cortas el footer baja al fondo. */
 		.viewport {
-			display: block; position: absolute; inset: 0;
+			display: flex; flex-direction: column; position: absolute; inset: 0;
 			overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
 		}
 
-		/* .scroller envuelve chrome + contenido; su fondo = inicio del footer. Acota el
-		   sticky del chrome para que se LIBERE al llegar al footer (sube entero y deja el
-		   footer debajo del nav inferior). */
-		.scroller { display: block; position: relative; }
-
-		/* TODO el chrome (cristal + marco + título + iconos) vive en .chrome: UNA capa
-		   sticky de 100dvh anclada a top:0 → se queda FIJA en pantalla mientras scrolleas.
-		   Acotada por .scroller (cuyo fondo es el inicio del footer): al llegar al final,
-		   la ventana entera sube y su borde inferior queda pegado al top del footer.
-		   El truco del margin negativo va en `main` (NO en el sticky, o anula su rango).
-		   Alto fijo 100dvh → el marco no se deforma. */
-		.chrome {
-			display: block; position: sticky; top: 0; z-index: 10; pointer-events: none;
-			height: 100dvh;
-		}
-
-		/* ENVOLTURA ÚNICA de cristal: rellena .chrome y se recorta (padding +
-		   mask-composite:exclude) dejando un hueco central. El borde resultante = nav
-		   superior (60px) + nav inferior (74px) + paredes (14px), TODO el mismo cristal
-		   y un solo backdrop-filter → una pieza continua, sin costuras. */
+		/* ENVOLTURA ÚNICA de cristal: overlay anclado a los bordes del shell (inset:0, SIN
+		   dvh). Recortada (padding + mask-composite:exclude) → borde = nav sup (60) + nav
+		   inf (74) + paredes (14), TODO el mismo cristal, un solo backdrop-filter, sin
+		   costuras. Fija sobre el scroll: el contenido pasa por debajo y se desenfoca. */
 		.frame-glass {
-			display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+			display: block; position: absolute; inset: 0; z-index: 5; pointer-events: none;
 			padding: 60px 14px 74px 14px;
 			background: color-mix(in srgb, var(--bg) 88%, transparent);
 			-webkit-backdrop-filter: blur(12px);
@@ -367,7 +350,7 @@
 		}
 		/* Línea del borde interior (esquinas curvas). El ::after ocupa el hueco central. */
 		.frame {
-			display: block; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+			display: block; position: absolute; inset: 0; z-index: 6; pointer-events: none;
 			padding: 60px 14px 74px 14px;
 		}
 		.frame::after {
@@ -375,9 +358,9 @@
 			border: 1px solid var(--line); border-radius: 16px;
 		}
 
-		/* barra superior: dentro de .chrome, SIN cristal propio (lo pone la envoltura). */
+		/* barra superior: overlay anclado arriba, SIN cristal propio (lo pone la envoltura). */
 		.site-header {
-			position: absolute; top: 0; left: 0; right: 0; z-index: 3; height: 60px;
+			position: absolute; top: 0; left: 0; right: 0; z-index: 20; height: 60px;
 			border-bottom: 0; pointer-events: auto;
 			background: none; -webkit-backdrop-filter: none; backdrop-filter: none;
 		}
@@ -390,10 +373,9 @@
 		.topbar-title { display: inline-flex; align-items: baseline; }
 		.sep { color: var(--muted); font-weight: 400; margin: 0 0.45rem; }
 
-		/* barra inferior: dentro de .chrome, transparente. Va junto al cristal → se
-		   libera con toda la ventana al llegar al footer. */
+		/* barra inferior: overlay anclado abajo, transparente (cristal de la envoltura). */
 		.mobile-bar {
-			position: absolute; bottom: 0; left: 0; right: 0; z-index: 3; height: 74px;
+			position: absolute; bottom: 0; left: 0; right: 0; z-index: 20; height: 74px;
 			pointer-events: auto;
 			display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
 			padding: 0 1rem;
@@ -402,13 +384,13 @@
 		/* botones del nav inferior del mismo tamaño que la X del menú (46px) */
 		.mobile-bar .icon-btn { width: 46px; height: 46px; font-size: 1.35rem; }
 
-		/* contenido: margin-top:-100dvh lo superpone bajo el chrome (que ocupa el 1er 100dvh
-		   del .scroller); hueco arriba (nav) y abajo (nav) + gutter lateral */
-		main { margin-top: -100dvh; padding: 78px 1.7rem 96px; }
+		/* contenido: hueco para el nav superior (78) + gutter lateral */
+		main { flex: 1 0 auto; padding: 78px 1.7rem 1.4rem; }
 		main :global(.wrap) { padding-left: 0; padding-right: 0; }
 
-		/* footer: por DEBAJO del nav inferior, marca el final del contenido */
-		.site-footer { margin-top: 0; padding: 2.2rem 0 2.6rem; }
+		/* footer: último bloque del scroll; el padding inferior deja su contenido por
+		   encima del nav inferior (el panel oscuro se extiende tras el cristal del nav). */
+		.site-footer { margin-top: 0; padding: 2.2rem 0 6rem; }
 	}
 
 	/* Footer responsive: dos columnas en móvil (marca a ancho completo). */
