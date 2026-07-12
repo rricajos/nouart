@@ -317,7 +317,7 @@
 		   bottom:73 = solapa 1px la barra inferior → sin gap. */
 		.frame-glass {
 			display: block; position: fixed; z-index: 14; pointer-events: none;
-			top: 60px; bottom: 73px; left: 0; right: 0;
+			top: 58px; bottom: 72px; left: 0; right: 0;
 			padding: 9px;
 			background: color-mix(in srgb, var(--bg) 88%, transparent);
 			-webkit-backdrop-filter: blur(10px);
@@ -327,10 +327,11 @@
 			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			mask-composite: exclude;
 		}
-		/* Capa 2: SOLO el borde interno (límite del marco con el contenido) */
+		/* Capa 2: SOLO el borde interno (límite del marco con el contenido).
+		   Alineado con el borde interior del cristal (glass inset 9px: 58+9=67, 72+9=81). */
 		.frame {
 			display: block; position: fixed; z-index: 16; pointer-events: none;
-			top: 69px; bottom: 82px; left: 9px; right: 9px;
+			top: 67px; bottom: 81px; left: 9px; right: 9px;
 			border: 1px solid var(--line);
 		}
 		/* El gutter va en main (no en .wrap) para que TODO el contenido —incluidas
