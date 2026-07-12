@@ -253,21 +253,33 @@
 
 	main { min-height: 70vh; }
 
-	/* --- Footer profesional --- */
-	.site-footer { border-top: 1px solid var(--line); margin-top: 4rem; padding: 3rem 0 1.5rem; background: var(--surface); }
+	/* --- Footer: panel oscuro de cierre, contrasta con el contenido --- */
+	.site-footer {
+		/* tokens propios del footer (fondo siempre oscuro → texto claro en ambos temas) */
+		--foot-bg: #1b1813; --foot-text: #ece7dd; --foot-muted: #9c9284;
+		--foot-line: rgba(255, 255, 255, 0.1); --foot-accent: #e0705f;
+		background: var(--foot-bg); color: var(--foot-text);
+		border-top: 3px solid var(--accent);
+		margin-top: 4rem; padding: 3rem 0 1.5rem;
+	}
+	/* En oscuro, un pelín más profundo que la página para que se lea como "pozo" */
+	@media (prefers-color-scheme: dark) { .site-footer { --foot-bg: #0d0b08; } }
+	:root[data-theme='light'] .site-footer { --foot-bg: #1b1813; }
+	:root[data-theme='dark'] .site-footer { --foot-bg: #0d0b08; }
+
 	.footer-grid {
 		display: grid; gap: 2rem;
 		grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
-		padding-bottom: 2rem; border-bottom: 1px solid var(--line);
+		padding-bottom: 2rem; border-bottom: 1px solid var(--foot-line);
 	}
-	.foot-logo { display: flex; align-items: center; gap: 0.5rem; font-family: var(--serif); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.6rem; }
-	.foot-brand p { max-width: 34ch; font-size: 0.95rem; margin: 0; }
+	.foot-logo { display: flex; align-items: center; gap: 0.5rem; font-family: var(--serif); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--foot-text); }
+	.foot-brand p { max-width: 34ch; font-size: 0.95rem; margin: 0; color: var(--foot-muted); }
 	.foot-col { display: flex; flex-direction: column; gap: 0.5rem; }
-	.foot-col h4 { font-family: var(--sans); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 0 0 0.4rem; }
-	.foot-col a, .foot-col span { font-size: 0.95rem; color: var(--text); }
+	.foot-col h4 { font-family: var(--sans); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--foot-muted); margin: 0 0 0.4rem; }
+	.foot-col a, .foot-col span { font-size: 0.95rem; color: var(--foot-text); }
 	.foot-col a { transition: color 0.15s; }
-	.foot-col a:hover { color: var(--accent); }
-	.foot-bottom { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding-top: 1.5rem; font-size: 0.88rem; color: var(--muted); }
+	.foot-col a:hover { color: var(--foot-accent); }
+	.foot-bottom { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding-top: 1.5rem; font-size: 0.88rem; color: var(--foot-muted); }
 
 	/* --- Menú a pantalla completa --- */
 	.menu-overlay {
