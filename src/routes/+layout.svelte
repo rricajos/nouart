@@ -143,6 +143,7 @@
 <div class="frame-glass" aria-hidden="true"></div>
 <div class="frame" aria-hidden="true"></div>
 
+<div class="scroll">
 <main>
 	{@render children()}
 </main>
@@ -179,6 +180,7 @@
 		<span class="muted">Nou Barris, Barcelona</span>
 	</div>
 </footer>
+</div>
 
 <!-- Móvil: barra inferior (botones circulares a la derecha) -->
 <div class="mobile-bar">
@@ -243,6 +245,9 @@
 	.topbar, .mobile-bar, .frame, .frame-glass { display: none; }
 
 	main { min-height: 70vh; }
+	/* Contenedor de scroll: transparente en escritorio (el layout fluye normal);
+	   en móvil se convierte en el área scrolleable del app-shell. */
+	.scroll { display: contents; }
 
 	/* --- Footer profesional --- */
 	.site-footer { border-top: 1px solid var(--line); margin-top: 4rem; padding: 3rem 0 1.5rem; background: var(--surface); }
@@ -300,8 +305,17 @@
 	@media (max-width: 820px) {
 		.brand, .desk-nav, .theme-desktop { display: none; }
 
+		/* App-shell: la app ocupa el viewport dinámico (100dvh) y el contenido hace
+		   scroll POR DENTRO → los navs y el marco no dependen de la barra de URL del
+		   navegador (que aparece/desaparece), así nunca se descuadran. */
+		:global(body) { height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+		.scroll {
+			display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0;
+			overflow-y: auto; -webkit-overflow-scrolling: touch;
+		}
+
 		/* barra superior = rótulo del marco (sin borde horizontal: no corta las paredes) */
-		.site-header { border-bottom: 0; }
+		.site-header { position: relative; z-index: 20; flex: 0 0 auto; border-bottom: 0; }
 		.header-inner { height: 60px; }
 		.topbar {
 			display: flex; align-items: center; gap: 0.6rem; width: 100%;
@@ -316,7 +330,7 @@
 		/* Capa 1: cristal (anillo de 9px con el MISMO material que el nav: frosted+blur).
 		   bottom:73 = solapa 1px la barra inferior → sin gap. */
 		.frame-glass {
-			display: block; position: fixed; z-index: 14; pointer-events: none;
+			display: block; position: absolute; z-index: 14; pointer-events: none;
 			top: 58px; bottom: 72px; left: 0; right: 0;
 			padding: 9px;
 			background: color-mix(in srgb, var(--bg) 88%, transparent);
@@ -330,21 +344,21 @@
 		/* Capa 2: SOLO el borde interno (límite del marco con el contenido).
 		   Alineado con el borde interior del cristal (glass inset 9px: 58+9=67, 72+9=81). */
 		.frame {
-			display: block; position: fixed; z-index: 16; pointer-events: none;
+			display: block; position: absolute; z-index: 16; pointer-events: none;
 			top: 67px; bottom: 81px; left: 9px; right: 9px;
 			border: 1px solid var(--line);
 		}
 		/* El gutter va en main (no en .wrap) para que TODO el contenido —incluidas
 		   las secciones a ancho completo— quede separado de las paredes del marco. */
 		main {
-			min-height: calc(100vh - 60px - 74px);
+			flex: 1 0 auto; min-height: 0;
 			padding: 1.5rem 1.7rem 1.8rem;
 		}
 		main :global(.wrap) { padding-left: 0; padding-right: 0; }
-		.site-footer { margin-top: 0; padding: 2rem 0 calc(2rem + 74px); }
+		.site-footer { margin-top: 0; padding: 2rem 0; }
 
 		.mobile-bar {
-			position: fixed; bottom: 0; left: 0; right: 0; z-index: 30; height: 74px;
+			position: relative; z-index: 20; flex: 0 0 auto; height: 74px;
 			display: flex; align-items: center; justify-content: flex-end; gap: 0.6rem;
 			padding: 0 1rem;
 			background: color-mix(in srgb, var(--bg) 92%, transparent);
