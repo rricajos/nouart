@@ -2,6 +2,7 @@
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
+	import { afterNavigate } from '$app/navigation';
 	import { site, contact } from '$lib/content';
 	let { children } = $props();
 
@@ -14,6 +15,12 @@
 	let viewportEl = $state<HTMLElement>();
 	let footerEl = $state<HTMLElement>();
 	let atFooter = $state(false);
+
+	// El scroll móvil ocurre dentro de .viewport (no la ventana), así que el reset de
+	// scroll de SvelteKit no lo alcanza → al navegar lo llevamos arriba a mano.
+	afterNavigate(() => {
+		viewportEl?.scrollTo(0, 0);
+	});
 
 	$effect(() => {
 		const vp = viewportEl;
