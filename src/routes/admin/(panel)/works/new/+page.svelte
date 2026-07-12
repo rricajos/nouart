@@ -5,12 +5,12 @@
 
 <svelte:head><title>Nueva obra · Gestión</title></svelte:head>
 
-<a href="/admin/obras" class="muted back">← Obras</a>
+<a href="/admin/works" class="muted back">← Obras</a>
 <h1>Nueva obra</h1>
 {#if data.artists.length}
 	<ArtworkForm artists={data.artists} {form} />
 {:else}
-	<p class="muted">Primero crea un artista. <a href="/admin/artistas/nuevo">Crear artista</a>.</p>
+	<p class="muted">Primero crea un artista. <a href="/admin/artists/new">Crear artista</a>.</p>
 {/if}
 
 <style>

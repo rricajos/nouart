@@ -19,8 +19,8 @@
 		<h1>{site.tagline}</h1>
 		<p class="lede muted">{site.heroLead}</p>
 		<div class="hero-cta">
-			<a href="/galeria" class="btn btn-primary">Ver la galería</a>
-			<a href="/contacto" class="btn">Únete / contacta</a>
+			<a href="/gallery" class="btn btn-primary">Ver la galería</a>
+			<a href="/contact" class="btn">Únete / contacta</a>
 		</div>
 	</div>
 </section>
@@ -40,7 +40,7 @@
 <section class="wrap block">
 	<div class="block-head">
 		<h2>Obras destacadas</h2>
-		<a href="/galeria" class="muted see-all">Ver las {data.total} obras →</a>
+		<a href="/gallery" class="muted see-all">Ver las {data.total} obras →</a>
 	</div>
 	{#if data.featured.length}
 		<div class="grid">
@@ -58,7 +58,7 @@
 		<div class="block-head"><h2>Artistas</h2></div>
 		<div class="artists-row">
 			{#each data.artists as a (a.id)}
-				<a class="artist-pill" href="/artista/{a.slug}">
+				<a class="artist-pill" href="/artist/{a.slug}">
 					<span class="avatar">
 						{#if a.photo}<img src="/uploads/{a.photo}" alt={a.name} />{/if}
 					</span>
@@ -83,7 +83,7 @@
 			<h2>{site.promoTitle}</h2>
 			<p class="muted">{site.promoLead}</p>
 		</div>
-		<a href="/contacto" class="btn btn-primary">Contacta con nosotros</a>
+		<a href="/contact" class="btn btn-primary">Contacta con nosotros</a>
 	</div>
 </section>
 

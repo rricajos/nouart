@@ -56,7 +56,7 @@
 
 	<div class="actions">
 		<button class="btn btn-primary">{artwork ? 'Guardar cambios' : 'Crear obra'}</button>
-		<a href="/admin/obras" class="btn">Cancelar</a>
+		<a href="/admin/works" class="btn">Cancelar</a>
 	</div>
 </form>
 

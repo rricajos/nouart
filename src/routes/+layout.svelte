@@ -83,20 +83,20 @@
 
 	const nav = [
 		{ href: '/', label: 'Inicio' },
-		{ href: '/galeria', label: 'Galería' },
-		{ href: '/artistas', label: 'Artistas' },
-		{ href: '/sobre', label: 'Acerca de' },
-		{ href: '/contacto', label: 'Contacto' }
+		{ href: '/gallery', label: 'Galería' },
+		{ href: '/artists', label: 'Artistas' },
+		{ href: '/about', label: 'Acerca de' },
+		{ href: '/contact', label: 'Contacto' }
 	];
 	const path = $derived(page.url.pathname);
 	const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 
 	// Etiqueta de la sección actual para la barra superior en móvil.
 	const sections = [
-		{ test: (p: string) => p.startsWith('/galeria') || p.startsWith('/obra'), label: 'Galería' },
-		{ test: (p: string) => p.startsWith('/artistas') || p.startsWith('/artista'), label: 'Artistas' },
-		{ test: (p: string) => p.startsWith('/sobre'), label: 'Acerca de' },
-		{ test: (p: string) => p.startsWith('/contacto'), label: 'Contacto' },
+		{ test: (p: string) => p.startsWith('/gallery') || p.startsWith('/work'), label: 'Galería' },
+		{ test: (p: string) => p.startsWith('/artist'), label: 'Artistas' },
+		{ test: (p: string) => p.startsWith('/about'), label: 'Acerca de' },
+		{ test: (p: string) => p.startsWith('/contact'), label: 'Contacto' },
 		{ test: (p: string) => p.startsWith('/admin'), label: 'Gestión' }
 	];
 	const currentLabel = $derived(sections.find((s) => s.test(path))?.label ?? '');
@@ -198,13 +198,13 @@
 		<nav class="foot-col">
 			<h4>Explorar</h4>
 			<a href="/">Inicio</a>
-			<a href="/galeria">Galería</a>
-			<a href="/artistas">Artistas</a>
+			<a href="/gallery">Galería</a>
+			<a href="/artists">Artistas</a>
 		</nav>
 		<nav class="foot-col">
 			<h4>Asociación</h4>
-			<a href="/sobre">Acerca de</a>
-			<a href="/contacto">Contacto</a>
+			<a href="/about">Acerca de</a>
+			<a href="/contact">Contacto</a>
 			<a href="/admin">Acceso gestión</a>
 		</nav>
 		<div class="foot-col">

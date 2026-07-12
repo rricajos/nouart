@@ -15,7 +15,7 @@
 
 	<div class="artist-grid">
 		{#each data.artists as a (a.id)}
-			<a class="artist-card" href="/artista/{a.slug}">
+			<a class="artist-card" href="/artist/{a.slug}">
 				<div class="photo">
 					{#if a.photo}<img src="/uploads/{a.photo}" alt={a.name} loading="lazy" />{/if}
 				</div>

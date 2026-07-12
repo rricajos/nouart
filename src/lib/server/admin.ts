@@ -32,7 +32,7 @@ export async function saveArtist(form: FormData, existing: Artist | null): Promi
 		return existing.id;
 	}
 
-	const slug = uniqueSlug(name, (s) => artistSlugExists(s), 'artista');
+	const slug = uniqueSlug(name, (s) => artistSlugExists(s), 'artist');
 	const maxSort = (db.prepare(`SELECT COALESCE(MAX(sort),0)+1 AS n FROM artists`).get() as { n: number }).n;
 	const info = db
 		.prepare(
@@ -74,7 +74,7 @@ export async function saveArtwork(form: FormData, existing: Artwork | null): Pro
 	}
 
 	const artistName = (db.prepare(`SELECT name FROM artists WHERE id=?`).get(artistId) as { name: string }).name;
-	const slug = uniqueSlug(`${artistName}-${title}`, (s) => artworkSlugExists(s), 'obra');
+	const slug = uniqueSlug(`${artistName}-${title}`, (s) => artworkSlugExists(s), 'work');
 	const maxSort = (db.prepare(`SELECT COALESCE(MAX(sort),0)+1 AS n FROM artworks`).get() as { n: number }).n;
 	const info = db
 		.prepare(

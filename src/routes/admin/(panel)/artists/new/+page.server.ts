@@ -9,6 +9,6 @@ export const actions: Actions = {
 		} catch (e) {
 			return fail(400, { error: (e as Error).message });
 		}
-		throw redirect(303, '/admin/artistas');
+		throw redirect(303, '/admin/artists');
 	}
 };

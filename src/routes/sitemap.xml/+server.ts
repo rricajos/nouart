@@ -10,11 +10,11 @@ export const GET: RequestHandler = ({ url }) => {
 
 	const urls = [
 		'',
-		'/galeria',
-		'/artistas',
-		'/sobre',
-		...artists.map((a) => `/artista/${a.slug}`),
-		...artworks.map((w) => `/obra/${w.slug}`)
+		'/gallery',
+		'/artists',
+		'/about',
+		...artists.map((a) => `/artist/${a.slug}`),
+		...artworks.map((w) => `/work/${w.slug}`)
 	];
 
 	const body = `<?xml version="1.0" encoding="UTF-8"?>

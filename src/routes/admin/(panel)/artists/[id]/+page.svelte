@@ -5,7 +5,7 @@
 
 <svelte:head><title>Editar {data.artist.name} · Gestión</title></svelte:head>
 
-<a href="/admin/artistas" class="muted back">← Artistas</a>
+<a href="/admin/artists" class="muted back">← Artistas</a>
 <h1>Editar artista</h1>
 <ArtistForm artist={data.artist} {form} />
 

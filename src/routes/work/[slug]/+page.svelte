@@ -22,7 +22,7 @@
 </svelte:head>
 
 <div class="wrap page">
-	<a href="/galeria" class="back muted">← Galería</a>
+	<a href="/gallery" class="back muted">← Galería</a>
 
 	<div class="layout">
 		<div class="figure">
@@ -36,7 +36,7 @@
 		<div class="details">
 			<h1>{aw.title}</h1>
 			<p class="by">
-				por <a href="/artista/{aw.artist_slug}">{aw.artist_name}</a>
+				por <a href="/artist/{aw.artist_slug}">{aw.artist_name}</a>
 			</p>
 			<div class="tags">
 				{#if aw.year}<span class="chip">{aw.year}</span>{/if}

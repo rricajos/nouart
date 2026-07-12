@@ -5,10 +5,10 @@
 
 <svelte:head><title>Editar {data.artwork.title} · Gestión</title></svelte:head>
 
-<a href="/admin/obras" class="muted back">← Obras</a>
+<a href="/admin/works" class="muted back">← Obras</a>
 <div class="head">
 	<h1>Editar obra</h1>
-	<a href="/obra/{data.artwork.slug}" target="_blank" class="muted small">Ver en la web ↗</a>
+	<a href="/work/{data.artwork.slug}" target="_blank" class="muted small">Ver en la web ↗</a>
 </div>
 <ArtworkForm artwork={data.artwork} artists={data.artists} {form} />
 

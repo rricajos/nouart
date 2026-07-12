@@ -5,7 +5,7 @@
 
 <svelte:head><title>Nuevo artista · Gestión</title></svelte:head>
 
-<a href="/admin/artistas" class="muted back">← Artistas</a>
+<a href="/admin/artists" class="muted back">← Artistas</a>
 <h1>Nuevo artista</h1>
 <ArtistForm {form} />
 

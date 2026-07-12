@@ -7,7 +7,7 @@
 
 <header class="head">
 	<h1>Obras</h1>
-	<a href="/admin/obras/nuevo" class="btn btn-primary">+ Nueva obra</a>
+	<a href="/admin/works/new" class="btn btn-primary">+ Nueva obra</a>
 </header>
 
 {#if data.artworks.length}
@@ -17,7 +17,7 @@
 			{#each data.artworks as w (w.id)}
 				<tr>
 					<td class="thumb">{#if w.image}<img src="/uploads/{w.image}" alt="" />{/if}</td>
-					<td><a href="/admin/obras/{w.id}"><strong>{w.title}</strong></a></td>
+					<td><a href="/admin/works/{w.id}"><strong>{w.title}</strong></a></td>
 					<td class="muted">{w.artist_name}</td>
 					<td class="muted">{w.year}</td>
 					<td>{w.likes}</td>
@@ -28,7 +28,7 @@
 						</form>
 					</td>
 					<td class="row-actions">
-						<a href="/admin/obras/{w.id}" class="mini">Editar</a>
+						<a href="/admin/works/{w.id}" class="mini">Editar</a>
 						<form method="POST" action="?/delete" use:enhance={() => ({ update }) => update()}
 							onsubmit={(e) => { if (!confirm(`¿Eliminar "${w.title}"?`)) e.preventDefault(); }}>
 							<input type="hidden" name="id" value={w.id} />
@@ -40,7 +40,7 @@
 		</tbody>
 	</table>
 {:else}
-	<p class="muted">Todavía no hay obras. <a href="/admin/obras/nuevo">Crea la primera</a>.</p>
+	<p class="muted">Todavía no hay obras. <a href="/admin/works/new">Crea la primera</a>.</p>
 {/if}
 
 <style>

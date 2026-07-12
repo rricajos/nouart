@@ -7,7 +7,7 @@
 
 <header class="head">
 	<h1>Artistas</h1>
-	<a href="/admin/artistas/nuevo" class="btn btn-primary">+ Nuevo artista</a>
+	<a href="/admin/artists/new" class="btn btn-primary">+ Nuevo artista</a>
 </header>
 
 {#if data.artists.length}
@@ -17,11 +17,11 @@
 			{#each data.artists as a (a.id)}
 				<tr>
 					<td class="thumb">{#if a.photo}<img src="/uploads/{a.photo}" alt="" />{/if}</td>
-					<td><a href="/admin/artistas/{a.id}"><strong>{a.name}</strong></a></td>
+					<td><a href="/admin/artists/{a.id}"><strong>{a.name}</strong></a></td>
 					<td class="muted">{a.discipline}</td>
 					<td>{a.works}</td>
 					<td class="row-actions">
-						<a href="/admin/artistas/{a.id}" class="mini">Editar</a>
+						<a href="/admin/artists/{a.id}" class="mini">Editar</a>
 						<form method="POST" action="?/delete" use:enhance={() => {
 							return async ({ update }) => update();
 						}} onsubmit={(e) => { if (!confirm(`¿Eliminar a ${a.name} y todas sus obras?`)) e.preventDefault(); }}>
@@ -34,7 +34,7 @@
 		</tbody>
 	</table>
 {:else}
-	<p class="muted">Todavía no hay artistas. <a href="/admin/artistas/nuevo">Crea el primero</a>.</p>
+	<p class="muted">Todavía no hay artistas. <a href="/admin/artists/new">Crea el primero</a>.</p>
 {/if}
 
 <style>

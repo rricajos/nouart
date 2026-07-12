@@ -17,7 +17,7 @@
 					<div class="c-body">
 						<div class="c-head">
 							<strong>{c.author}</strong>
-							<span class="muted">· sobre <a href="/obra/{c.artwork_slug}" target="_blank">{c.artwork_title}</a></span>
+							<span class="muted">· sobre <a href="/work/{c.artwork_slug}" target="_blank">{c.artwork_title}</a></span>
 							<span class="muted date">{c.created_at.slice(0, 16).replace('T', ' ')}</span>
 						</div>
 						<p>{c.body}</p>

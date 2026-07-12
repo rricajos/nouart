@@ -4,10 +4,10 @@
 
 	const links = $derived([
 		{ href: '/admin', label: 'Resumen', exact: true },
-		{ href: '/admin/artistas', label: 'Artistas' },
-		{ href: '/admin/obras', label: 'Obras' },
-		{ href: '/admin/comentarios', label: 'Comentarios', badge: data.pendingComments },
-		{ href: '/admin/mensajes', label: 'Mensajes', badge: data.unreadMessages }
+		{ href: '/admin/artists', label: 'Artistas' },
+		{ href: '/admin/works', label: 'Obras' },
+		{ href: '/admin/comments', label: 'Comentarios', badge: data.pendingComments },
+		{ href: '/admin/messages', label: 'Mensajes', badge: data.unreadMessages }
 	]);
 	const path = $derived(page.url.pathname);
 </script>

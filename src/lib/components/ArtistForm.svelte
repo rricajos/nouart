@@ -46,7 +46,7 @@
 
 	<div class="actions">
 		<button class="btn btn-primary">{artist ? 'Guardar cambios' : 'Crear artista'}</button>
-		<a href="/admin/artistas" class="btn">Cancelar</a>
+		<a href="/admin/artists" class="btn">Cancelar</a>
 	</div>
 </form>
 

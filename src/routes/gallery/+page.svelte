@@ -15,9 +15,9 @@
 	</header>
 
 	<nav class="filters" aria-label="Filtrar por artista">
-		<a href="/galeria" class="filter" class:active={!data.artistFilter}>Todas</a>
+		<a href="/gallery" class="filter" class:active={!data.artistFilter}>Todas</a>
 		{#each data.artists as a (a.id)}
-			<a href="/galeria?artista={a.slug}" class="filter" class:active={data.artistFilter === a.slug}>
+			<a href="/gallery?artist={a.slug}" class="filter" class:active={data.artistFilter === a.slug}>
 				{a.name}
 			</a>
 		{/each}

@@ -2,11 +2,11 @@
 	let { data } = $props();
 	const s = $derived(data.stats);
 	const tiles = $derived([
-		{ label: 'Artistas', value: s.artists, href: '/admin/artistas' },
-		{ label: 'Obras', value: s.artworks, href: '/admin/obras', sub: `${s.published} publicadas` },
+		{ label: 'Artistas', value: s.artists, href: '/admin/artists' },
+		{ label: 'Obras', value: s.artworks, href: '/admin/works', sub: `${s.published} publicadas` },
 		{ label: 'Me gusta', value: s.likes },
-		{ label: 'Comentarios por revisar', value: s.pendingComments, href: '/admin/comentarios', warn: s.pendingComments > 0 },
-		{ label: 'Mensajes sin leer', value: s.unreadMessages, href: '/admin/mensajes', warn: s.unreadMessages > 0 }
+		{ label: 'Comentarios por revisar', value: s.pendingComments, href: '/admin/comments', warn: s.pendingComments > 0 },
+		{ label: 'Mensajes sin leer', value: s.unreadMessages, href: '/admin/messages', warn: s.unreadMessages > 0 }
 	]);
 </script>
 
@@ -15,8 +15,8 @@
 <header class="head">
 	<h1>Resumen</h1>
 	<div class="quick">
-		<a href="/admin/artistas/nuevo" class="btn">+ Artista</a>
-		<a href="/admin/obras/nuevo" class="btn btn-primary">+ Obra</a>
+		<a href="/admin/artists/new" class="btn">+ Artista</a>
+		<a href="/admin/works/new" class="btn btn-primary">+ Obra</a>
 	</div>
 </header>
 
@@ -42,7 +42,7 @@
 				</li>
 			{/each}
 		</ul>
-		<a href="/admin/mensajes" class="muted">Ver todos →</a>
+		<a href="/admin/messages" class="muted">Ver todos →</a>
 	{:else}
 		<p class="muted">Aún no hay mensajes.</p>
 	{/if}

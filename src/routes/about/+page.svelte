@@ -32,9 +32,9 @@
 		<p class="muted">
 			Si haces arte en el distrito o quieres participar en nuestras actividades, nos encantará
 			conocerte. Escríbenos a <a href="mailto:{contact.email}">{contact.email}</a> o desde la
-			página de <a href="/contacto">contacto</a>.
+			página de <a href="/contact">contacto</a>.
 		</p>
-		<a href="/contacto" class="btn btn-primary">Contacta con nosotros</a>
+		<a href="/contact" class="btn btn-primary">Contacta con nosotros</a>
 	</section>
 </div>
 

@@ -10,7 +10,7 @@
 </svelte:head>
 
 <div class="wrap page">
-	<a href="/artistas" class="back muted">← Todos los artistas</a>
+	<a href="/artists" class="back muted">← Todos los artistas</a>
 
 	<header class="profile">
 		<div class="photo">

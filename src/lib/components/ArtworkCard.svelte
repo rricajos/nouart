@@ -3,7 +3,7 @@
 	let { artwork }: { artwork: ArtworkWithArtist } = $props();
 </script>
 
-<a class="card" href="/obra/{artwork.slug}">
+<a class="card" href="/work/{artwork.slug}">
 	<div class="card-thumb">
 		{#if artwork.image}
 			<img src="/uploads/{artwork.image}" alt={artwork.title} loading="lazy" />
