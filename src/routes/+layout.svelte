@@ -333,10 +333,13 @@
 		   UNA sola figura → esquinas siempre limpias. */
 		/* Capa 1: cristal (anillo de 9px con el MISMO material que el nav: frosted+blur).
 		   bottom:73 = solapa 1px la barra inferior → sin gap. */
+		/* Cristal: SOLO paredes laterales (padding solo lados) → los navs hacen de tapa
+		   superior/inferior; sin banda horizontal que deje gap/costura con los navs.
+		   Se solapan 2px con los navs por arriba/abajo (58→60, H-72→H-74). */
 		.frame-glass {
 			display: block; position: absolute; z-index: 14; pointer-events: none;
 			top: 58px; bottom: 72px; left: 0; right: 0;
-			padding: 9px 14px; border-radius: 16px;
+			padding: 0 14px;
 			background: color-mix(in srgb, var(--bg) 88%, transparent);
 			-webkit-backdrop-filter: blur(10px);
 			backdrop-filter: blur(10px);
@@ -345,12 +348,12 @@
 			mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
 			mask-composite: exclude;
 		}
-		/* Capa 2: SOLO el borde interno (límite del marco con el contenido).
-		   Alineado con el borde interior del cristal (lados 14px, top/bottom 9px). */
+		/* Borde interno: SOLO líneas verticales (izq/der), del borde del header al de la
+		   barra → sin líneas horizontales que parezcan un borde del nav. */
 		.frame {
 			display: block; position: absolute; z-index: 16; pointer-events: none;
-			top: 67px; bottom: 81px; left: 14px; right: 14px;
-			border: 1px solid var(--line); border-radius: 8px;
+			top: 60px; bottom: 74px; left: 14px; right: 14px;
+			border-left: 1px solid var(--line); border-right: 1px solid var(--line);
 		}
 		main { flex: 1 0 auto; padding: 0; }
 		.site-footer { margin-top: 0; padding: 2rem 0; }
