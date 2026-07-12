@@ -315,14 +315,14 @@
 		.scroller { display: block; position: relative; }
 
 		/* TODO el chrome (cristal + marco + título + iconos) vive en .chrome: UNA capa
-		   sticky de 100dvh. Anclado a bottom:0 → el nav inferior se queda PEGADO al fondo
-		   y, al llegar el final, es el footer quien lo empuja hacia arriba (el nav se
-		   queda "en el top del footer"). Todo va como una sola unidad, sin desincronizarse.
-		   margin-bottom:-100dvh → no ocupa flujo (el contenido se superpone por debajo).
+		   sticky de 100dvh anclada a top:0 → se queda FIJA en pantalla mientras scrolleas.
+		   Acotada por .scroller (cuyo fondo es el inicio del footer): al llegar al final,
+		   la ventana entera sube y su borde inferior queda pegado al top del footer.
+		   El truco del margin negativo va en `main` (NO en el sticky, o anula su rango).
 		   Alto fijo 100dvh → el marco no se deforma. */
 		.chrome {
-			display: block; position: sticky; bottom: 0; z-index: 10; pointer-events: none;
-			height: 100dvh; margin-bottom: -100dvh;
+			display: block; position: sticky; top: 0; z-index: 10; pointer-events: none;
+			height: 100dvh;
 		}
 
 		/* ENVOLTURA ÚNICA de cristal: rellena .chrome y se recorta (padding +
@@ -377,8 +377,9 @@
 		/* botones del nav inferior del mismo tamaño que la X del menú (46px) */
 		.mobile-bar .icon-btn { width: 46px; height: 46px; font-size: 1.35rem; }
 
-		/* contenido: se superpone bajo el chrome; hueco arriba (nav) y abajo (nav) + gutter */
-		main { padding: 78px 1.7rem 96px; }
+		/* contenido: margin-top:-100dvh lo superpone bajo el chrome (que ocupa el 1er 100dvh
+		   del .scroller); hueco arriba (nav) y abajo (nav) + gutter lateral */
+		main { margin-top: -100dvh; padding: 78px 1.7rem 96px; }
 		main :global(.wrap) { padding-left: 0; padding-right: 0; }
 
 		/* footer: por DEBAJO del nav inferior, marca el final del contenido */
