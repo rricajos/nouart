@@ -154,8 +154,7 @@
 			{/if}
 			<form method="POST" action="/logout"><button type="submit" class="ma-link ma-btn">Cerrar sesión</button></form>
 		{:else}
-			<a href="/login" class="ma-link" onclick={() => (menuOpen = false)}>Entrar</a>
-			<a href="/register" class="ma-link ma-cta" onclick={() => (menuOpen = false)}>Crear cuenta</a>
+			<a href="/login" class="ma-link ma-cta" onclick={() => (menuOpen = false)}>Entrar o crear cuenta</a>
 		{/if}
 	</div>
 	<div class="menu-foot muted">{site.name} · {contact.location}</div>
