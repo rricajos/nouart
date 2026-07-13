@@ -7,12 +7,18 @@ export const GET: RequestHandler = ({ url }) => {
 	const artworks = db
 		.prepare(`SELECT slug FROM artworks WHERE published = 1`)
 		.all() as { slug: string }[];
+	const events = db
+		.prepare(`SELECT slug FROM events WHERE published = 1`)
+		.all() as { slug: string }[];
 
 	const urls = [
 		'',
+		'/agenda',
 		'/gallery',
 		'/artists',
 		'/about',
+		'/contact',
+		...events.map((e) => `/agenda/${e.slug}`),
 		...artists.map((a) => `/artist/${a.slug}`),
 		...artworks.map((w) => `/work/${w.slug}`)
 	];

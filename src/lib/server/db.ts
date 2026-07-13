@@ -67,6 +67,20 @@ CREATE TABLE IF NOT EXISTS messages (
 	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS events (
+	id          INTEGER PRIMARY KEY AUTOINCREMENT,
+	slug        TEXT NOT NULL UNIQUE,
+	title       TEXT NOT NULL,
+	summary     TEXT NOT NULL DEFAULT '',
+	body        TEXT NOT NULL DEFAULT '',
+	date        TEXT NOT NULL DEFAULT '',         -- YYYY-MM-DD
+	time        TEXT NOT NULL DEFAULT '',         -- libre, p.ej. "18:00"
+	location    TEXT NOT NULL DEFAULT '',
+	image       TEXT,
+	published   INTEGER NOT NULL DEFAULT 1,
+	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS users (
 	id             INTEGER PRIMARY KEY AUTOINCREMENT,
 	name           TEXT NOT NULL,
@@ -147,6 +161,20 @@ export interface Comment {
 	body: string;
 	approved: number;
 	user_id: number | null;
+	created_at: string;
+}
+
+export interface Event {
+	id: number;
+	slug: string;
+	title: string;
+	summary: string;
+	body: string;
+	date: string;
+	time: string;
+	location: string;
+	image: string | null;
+	published: number;
 	created_at: string;
 }
 

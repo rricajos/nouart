@@ -1,4 +1,4 @@
-import { db, type Artist, type Artwork, type Comment } from './db';
+import { db, type Artist, type Artwork, type Comment, type Event } from './db';
 
 export interface ArtworkWithArtist extends Artwork {
 	artist_name: string;
@@ -74,4 +74,26 @@ export function hasLiked(artworkId: number, visitor: string): boolean {
 	return !!db
 		.prepare(`SELECT 1 FROM likes WHERE artwork_id = ? AND visitor = ?`)
 		.get(artworkId, visitor);
+}
+
+// --- Agenda / eventos ---
+/** Eventos publicados separados en próximos (fecha >= hoy o sin fecha) y pasados. */
+export function listPublishedEvents(): { upcoming: Event[]; past: Event[] } {
+	const upcoming = db
+		.prepare(
+			`SELECT * FROM events WHERE published = 1 AND (date = '' OR date >= date('now'))
+			 ORDER BY (date = '') ASC, date ASC`
+		)
+		.all() as Event[];
+	const past = db
+		.prepare(
+			`SELECT * FROM events WHERE published = 1 AND date != '' AND date < date('now')
+			 ORDER BY date DESC`
+		)
+		.all() as Event[];
+	return { upcoming, past };
+}
+
+export function getEventBySlug(slug: string): Event | undefined {
+	return db.prepare(`SELECT * FROM events WHERE slug = ?`).get(slug) as Event | undefined;
 }

@@ -6,6 +6,7 @@
 		{ href: '/admin', label: 'Resumen', exact: true },
 		{ href: '/admin/artists', label: 'Artistas' },
 		{ href: '/admin/works', label: 'Obras' },
+		{ href: '/admin/events', label: 'Agenda' },
 		{ href: '/admin/comments', label: 'Comentarios', badge: data.pendingComments },
 		{ href: '/admin/messages', label: 'Mensajes', badge: data.unreadMessages },
 		{ href: '/admin/users', label: 'Usuarios', badge: data.pendingArtists }

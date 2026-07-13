@@ -1,4 +1,4 @@
-import { db, type Artist, type Artwork } from './db';
+import { db, type Artist, type Artwork, type Event } from './db';
 import { saveImage, deleteImage } from './uploads';
 import { uniqueSlug } from './util';
 
@@ -6,6 +6,8 @@ const artistSlugExists = (slug: string, exceptId = 0) =>
 	!!db.prepare(`SELECT 1 FROM artists WHERE slug = ? AND id != ?`).get(slug, exceptId);
 const artworkSlugExists = (slug: string, exceptId = 0) =>
 	!!db.prepare(`SELECT 1 FROM artworks WHERE slug = ? AND id != ?`).get(slug, exceptId);
+const eventSlugExists = (slug: string, exceptId = 0) =>
+	!!db.prepare(`SELECT 1 FROM events WHERE slug = ? AND id != ?`).get(slug, exceptId);
 
 /** Create or update an artist from a submitted form. Returns the artist id. */
 export async function saveArtist(form: FormData, existing: Artist | null): Promise<number> {
@@ -99,4 +101,49 @@ export async function deleteArtwork(id: number): Promise<void> {
 	if (!aw) return;
 	db.prepare(`DELETE FROM artworks WHERE id=?`).run(id);
 	await deleteImage(aw.image);
+}
+
+/** Create or update an event from a submitted form. Returns the event id. */
+export async function saveEvent(form: FormData, existing: Event | null): Promise<number> {
+	const title = String(form.get('title') ?? '').trim();
+	if (!title) throw new Error('El título es obligatorio.');
+
+	const data = {
+		title,
+		summary: String(form.get('summary') ?? '').trim(),
+		body: String(form.get('body') ?? '').trim(),
+		date: String(form.get('date') ?? '').trim(),
+		time: String(form.get('time') ?? '').trim(),
+		location: String(form.get('location') ?? '').trim(),
+		published: form.get('published') ? 1 : 0
+	};
+
+	const newImage = await saveImage(form.get('image') as File | null);
+
+	if (existing) {
+		if (newImage) await deleteImage(existing.image);
+		db.prepare(
+			`UPDATE events SET title=@title, summary=@summary, body=@body, date=@date, time=@time,
+			 location=@location, published=@published ${newImage ? ', image=@image' : ''} WHERE id=@id`
+		).run({ ...data, image: newImage, id: existing.id });
+		return existing.id;
+	}
+
+	const slug = uniqueSlug(title, (s) => eventSlugExists(s), 'event');
+	const info = db
+		.prepare(
+			`INSERT INTO events (slug, title, summary, body, date, time, location, published, image)
+			 VALUES (@slug, @title, @summary, @body, @date, @time, @location, @published, @image)`
+		)
+		.run({ ...data, slug, image: newImage });
+	return Number(info.lastInsertRowid);
+}
+
+export async function deleteEvent(id: number): Promise<void> {
+	const ev = db.prepare(`SELECT image FROM events WHERE id=?`).get(id) as
+		| { image: string | null }
+		| undefined;
+	if (!ev) return;
+	db.prepare(`DELETE FROM events WHERE id=?`).run(id);
+	await deleteImage(ev.image);
 }
