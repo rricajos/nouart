@@ -18,6 +18,7 @@ export const GET: RequestHandler = ({ url }) => {
 		'/artists',
 		'/about',
 		'/contact',
+		'/terms',
 		...events.map((e) => `/agenda/${e.slug}`),
 		...artists.map((a) => `/artist/${a.slug}`),
 		...artworks.map((w) => `/work/${w.slug}`)

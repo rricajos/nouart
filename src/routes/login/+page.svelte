@@ -34,7 +34,7 @@
 </svelte:head>
 
 <div class="wrap auth">
-	<div class="card">
+	<div class="auth-card">
 		<h1>{step === 'register' ? 'Crea tu cuenta' : 'Entrar en Nou Art'}</h1>
 
 		{#if justReset && step === 'email'}
@@ -102,6 +102,19 @@
 						</label>
 					</div>
 				</div>
+
+				<label class="agree">
+					<input type="checkbox" name="terms" required />
+					<span>He leído y acepto los <a href="/terms" target="_blank" rel="noopener">términos y condiciones y la política de privacidad</a>.</span>
+				</label>
+
+				{#if role === 'artist'}
+					<label class="agree">
+						<input type="checkbox" name="artist_terms" required />
+						<span>Declaro que soy autor/a de las obras que publique y que dispongo de los derechos para mostrarlas. Entiendo que mi cuenta de artista será revisada por el equipo de Nou Art antes de activarse.</span>
+					</label>
+				{/if}
+
 				<button class="btn btn-primary btn-block big">Crear cuenta</button>
 			</form>
 		{/if}
@@ -110,7 +123,7 @@
 
 <style>
 	.auth { max-width: 460px; padding: 3rem 1.25rem 4rem; }
-	.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem 1.8rem; }
+	.auth-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem 1.8rem; }
 	h1 { margin-bottom: 0.4rem; }
 	.sub { margin-bottom: 1.6rem; font-size: 1rem; }
 	.big { padding: 0.85rem 1.1rem; font-size: 1.05rem; margin-top: 0.6rem; }
@@ -130,5 +143,9 @@
 	.role input { position: absolute; opacity: 0; width: 0; height: 0; }
 	.role-title { font-weight: 600; font-size: 0.95rem; color: var(--text); }
 	.role-desc { font-size: 0.8rem; line-height: 1.35; font-weight: 400; }
+
+	.agree { display: flex; align-items: flex-start; gap: 0.6rem; margin-top: 1.1rem; font-size: 0.9rem; line-height: 1.45; cursor: pointer; }
+	.agree input { width: auto; margin-top: 0.15rem; flex: none; }
+	.agree a { color: var(--accent); text-decoration: underline; }
 	@media (max-width: 420px) { .roles { grid-template-columns: 1fr; } }
 </style>

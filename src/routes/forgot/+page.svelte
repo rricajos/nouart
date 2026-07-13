@@ -9,7 +9,7 @@
 </svelte:head>
 
 <div class="wrap auth">
-	<div class="card">
+	<div class="auth-card">
 		<h1>Recuperar contraseña</h1>
 		{#if form?.sent}
 			<p class="muted">
@@ -33,7 +33,7 @@
 
 <style>
 	.auth { max-width: 440px; padding: 3rem 1.25rem 4rem; }
-	.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem 1.8rem; }
+	.auth-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 2rem 1.8rem; }
 	h1 { margin-bottom: 0.5rem; }
 	.sub { margin-bottom: 1.6rem; }
 	.btn-block { margin-top: 0.4rem; }

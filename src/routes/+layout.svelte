@@ -223,6 +223,7 @@
 			<h4>Asociación</h4>
 			<a href="/about">Acerca de</a>
 			<a href="/contact">Contacto</a>
+			<a href="/terms">Términos y privacidad</a>
 			<a href="/admin">Acceso gestión</a>
 		</nav>
 		<div class="foot-col">

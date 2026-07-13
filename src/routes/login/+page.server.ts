@@ -61,6 +61,10 @@ export const actions: Actions = {
 		if (name.length < 2) return fail(400, { ...base, error: 'Escribe tu nombre.' });
 		if (password.length < 8)
 			return fail(400, { ...base, error: 'La contraseña debe tener al menos 8 caracteres.' });
+		if (!form.get('terms'))
+			return fail(400, { ...base, error: 'Debes aceptar los términos y condiciones para crear la cuenta.' });
+		if (role === 'artist' && !form.get('artist_terms'))
+			return fail(400, { ...base, error: 'Como artista, debes aceptar la declaración de autoría.' });
 		if (getUserByEmail(email))
 			return fail(409, {
 				step: 'login',
