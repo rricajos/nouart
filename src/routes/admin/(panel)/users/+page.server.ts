@@ -2,6 +2,7 @@ import { fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { getUserById } from '$lib/server/users';
 import { uniqueSlug } from '$lib/server/util';
+import { sendArtistApprovedEmail } from '$lib/server/notify';
 import type { Actions, PageServerLoad } from './$types';
 
 interface UserRow {
@@ -30,11 +31,12 @@ const slugExists = (slug: string) =>
 	!!db.prepare(`SELECT 1 FROM artists WHERE slug = ?`).get(slug);
 
 export const actions: Actions = {
-	approve: async ({ request }) => {
+	approve: async ({ request, url }) => {
 		const form = await request.formData();
 		const id = Number(form.get('id'));
 		const u = getUserById(id);
 		if (!u || u.role !== 'artist') return fail(400, { error: 'Usuario no válido.' });
+		const wasApproved = !!u.approved;
 		let artistId = u.artist_id;
 		if (!artistId) {
 			// Crea el perfil de artista enlazado (oculto hasta que tenga obra/lo edite).
@@ -45,6 +47,7 @@ export const actions: Actions = {
 			artistId = Number(info.lastInsertRowid);
 		}
 		db.prepare(`UPDATE users SET approved = 1, artist_id = ? WHERE id = ?`).run(artistId, id);
+		if (!wasApproved) await sendArtistApprovedEmail(url.origin, u.email, u.name); // solo la 1ª vez
 		return { ok: true };
 	},
 

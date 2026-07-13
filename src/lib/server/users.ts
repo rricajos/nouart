@@ -20,7 +20,10 @@ export interface SessionUser {
 	role: Role;
 	artist_id: number | null;
 	approved: boolean;
+	email_verified: boolean;
 }
+
+export type TokenKind = 'verify' | 'reset';
 
 // --- Contraseñas (scrypt nativo, sin dependencias) ---
 export function hashPassword(pw: string): string {
@@ -82,7 +85,7 @@ export function getSessionUser(token: string | undefined): SessionUser | null {
 	if (!token) return null;
 	const row = db
 		.prepare(
-			`SELECT s.expires_at, u.id, u.name, u.email, u.role, u.artist_id, u.approved
+			`SELECT s.expires_at, u.id, u.name, u.email, u.role, u.artist_id, u.approved, u.email_verified
 			 FROM sessions s JOIN users u ON u.id = s.user_id
 			 WHERE s.token = ?`
 		)
@@ -95,6 +98,7 @@ export function getSessionUser(token: string | undefined): SessionUser | null {
 				role: Role;
 				artist_id: number | null;
 				approved: number;
+				email_verified: number;
 		  }
 		| undefined;
 	if (!row) return null;
@@ -108,10 +112,57 @@ export function getSessionUser(token: string | undefined): SessionUser | null {
 		email: row.email,
 		role: row.role,
 		artist_id: row.artist_id,
-		approved: !!row.approved
+		approved: !!row.approved,
+		email_verified: !!row.email_verified
 	};
 }
 
 export function destroySession(token: string | undefined): void {
 	if (token) db.prepare(`DELETE FROM sessions WHERE token = ?`).run(token);
+}
+
+// --- Tokens de un solo uso (verificación de email / reset de contraseña) ---
+const TOKEN_AGE: Record<TokenKind, number> = {
+	verify: 60 * 60 * 24 * 7, // 7 días
+	reset: 60 * 60 // 1 hora
+};
+
+/** Crea un token de un solo uso. Para 'reset' invalida los previos del usuario. */
+export function createToken(userId: number, kind: TokenKind): string {
+	if (kind === 'reset')
+		db.prepare(`DELETE FROM user_tokens WHERE user_id = ? AND kind = 'reset'`).run(userId);
+	const token = randomBytes(32).toString('hex');
+	db.prepare(`INSERT INTO user_tokens (token, user_id, kind, expires_at) VALUES (?, ?, ?, ?)`).run(
+		token,
+		userId,
+		kind,
+		now() + TOKEN_AGE[kind]
+	);
+	return token;
+}
+
+/** Devuelve el user_id de un token válido SIN consumirlo (para pintar el formulario). */
+export function peekToken(token: string, kind: TokenKind): number | null {
+	const row = db
+		.prepare(`SELECT user_id, expires_at FROM user_tokens WHERE token = ? AND kind = ?`)
+		.get(token, kind) as { user_id: number; expires_at: number } | undefined;
+	if (!row || row.expires_at < now()) return null;
+	return row.user_id;
+}
+
+/** Valida y CONSUME (borra) un token. Devuelve el user_id o null. */
+export function consumeToken(token: string, kind: TokenKind): number | null {
+	const userId = peekToken(token, kind);
+	db.prepare(`DELETE FROM user_tokens WHERE token = ?`).run(token);
+	return userId;
+}
+
+export function setEmailVerified(userId: number): void {
+	db.prepare(`UPDATE users SET email_verified = 1 WHERE id = ?`).run(userId);
+}
+
+export function setPassword(userId: number, password: string): void {
+	db.prepare(`UPDATE users SET password = ? WHERE id = ?`).run(hashPassword(password), userId);
+	// Cierra el resto de sesiones al cambiar la contraseña.
+	db.prepare(`DELETE FROM sessions WHERE user_id = ?`).run(userId);
 }

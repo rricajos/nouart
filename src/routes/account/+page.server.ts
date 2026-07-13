@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
-import { getUserById, hashPassword, verifyPassword } from '$lib/server/users';
+import { getUserById, hashPassword, verifyPassword, createToken } from '$lib/server/users';
+import { sendVerifyEmail } from '$lib/server/notify';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = ({ locals }) => {
@@ -37,5 +38,17 @@ export const actions: Actions = {
 			return fail(400, { pwError: 'La nueva contraseña debe tener al menos 8 caracteres.' });
 		db.prepare(`UPDATE users SET password = ? WHERE id = ?`).run(hashPassword(next), u.id);
 		return { pwOk: true };
+	},
+
+	resendVerify: async ({ locals, url }) => {
+		if (!locals.user) return fail(401);
+		if (locals.user.email_verified) return { vSent: true };
+		await sendVerifyEmail(
+			url.origin,
+			locals.user.email,
+			locals.user.name,
+			createToken(locals.user.id, 'verify')
+		);
+		return { vSent: true };
 	}
 };

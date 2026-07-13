@@ -68,19 +68,28 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 
 CREATE TABLE IF NOT EXISTS users (
-	id          INTEGER PRIMARY KEY AUTOINCREMENT,
-	name        TEXT NOT NULL,
-	email       TEXT NOT NULL UNIQUE,
-	password    TEXT NOT NULL,                    -- scrypt: salt:hash
-	role        TEXT NOT NULL DEFAULT 'member',   -- member | artist
-	artist_id   INTEGER REFERENCES artists(id) ON DELETE SET NULL,
-	approved    INTEGER NOT NULL DEFAULT 1,       -- artistas arrancan 0 (pendientes)
-	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+	id             INTEGER PRIMARY KEY AUTOINCREMENT,
+	name           TEXT NOT NULL,
+	email          TEXT NOT NULL UNIQUE,
+	password       TEXT NOT NULL,                    -- scrypt: salt:hash
+	role           TEXT NOT NULL DEFAULT 'member',   -- member | artist
+	artist_id      INTEGER REFERENCES artists(id) ON DELETE SET NULL,
+	approved       INTEGER NOT NULL DEFAULT 1,       -- artistas arrancan 0 (pendientes)
+	email_verified INTEGER NOT NULL DEFAULT 0,
+	created_at     TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
 	token       TEXT PRIMARY KEY,
 	user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	expires_at  INTEGER NOT NULL,                 -- unix seconds
+	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS user_tokens (
+	token       TEXT PRIMARY KEY,
+	user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	kind        TEXT NOT NULL,                    -- verify | reset
 	expires_at  INTEGER NOT NULL,                 -- unix seconds
 	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -101,6 +110,7 @@ function addColumn(sql: string) {
 	}
 }
 addColumn(`ALTER TABLE comments ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL`);
+addColumn(`ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0`);
 
 export interface Artist {
 	id: number;
@@ -150,6 +160,7 @@ export interface User {
 	role: Role;
 	artist_id: number | null;
 	approved: number;
+	email_verified: number;
 	created_at: string;
 }
 

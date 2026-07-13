@@ -21,6 +21,19 @@
 		</form>
 	</div>
 
+	{#if !acc.email_verified}
+		<div class="verify-banner">
+			{#if form?.vSent}
+				<span>Te hemos enviado un email de verificación. Revisa tu bandeja.</span>
+			{:else}
+				<span>Tu email aún no está verificado.</span>
+				<form method="POST" action="?/resendVerify" use:enhance>
+					<button class="link-btn" type="submit">Reenviar verificación</button>
+				</form>
+			{/if}
+		</div>
+	{/if}
+
 	{#if acc.role === 'artist'}
 		<section class="artist-box">
 			{#if acc.approved && data.artistSlug}
@@ -78,6 +91,13 @@
 	.head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; }
 	.head h1 { margin: 0.1rem 0 0.2rem; }
 	.logout { font-size: 0.9rem; }
+	.verify-banner {
+		display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;
+		background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px;
+		padding: 0.7rem 1rem; margin-bottom: 1.6rem; font-size: 0.92rem;
+	}
+	.verify-banner form { margin: 0; }
+	.link-btn { font: inherit; font-size: 0.92rem; font-weight: 600; color: var(--accent); background: none; border: 0; cursor: pointer; text-decoration: underline; padding: 0; }
 	.artist-box {
 		background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent);
 		border-radius: var(--radius); padding: 1.4rem 1.5rem; margin-bottom: 2rem;
