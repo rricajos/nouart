@@ -1,6 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
 import { getUserById, hashPassword, verifyPassword, createToken } from '$lib/server/users';
+import { listFavorites } from '$lib/server/queries';
 import { sendVerifyEmail } from '$lib/server/notify';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -13,7 +14,11 @@ export const load: PageServerLoad = ({ locals }) => {
 			| undefined;
 		artistSlug = r?.slug ?? null;
 	}
-	return { account: locals.user, artistSlug };
+	return {
+		account: locals.user,
+		artistSlug,
+		favorites: listFavorites(`u${locals.user.id}`)
+	};
 };
 
 export const actions: Actions = {

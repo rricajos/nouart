@@ -21,12 +21,18 @@ function visitorId(cookies: import('@sveltejs/kit').Cookies): string {
 	return id;
 }
 
-export const load: PageServerLoad = ({ params, cookies }) => {
+/** Identidad para los likes: la cuenta si hay sesión (favoritos por usuario,
+ *  estables entre dispositivos), o la cookie de visitante anónimo si no. */
+function likeIdentity(locals: App.Locals, cookies: import('@sveltejs/kit').Cookies): string {
+	return locals.user ? `u${locals.user.id}` : visitorId(cookies);
+}
+
+export const load: PageServerLoad = ({ params, cookies, locals }) => {
 	const artwork = getArtworkBySlug(params.slug);
-	if (!artwork || (!artwork.published && !cookies.get('nouart_admin'))) {
+	if (!artwork || (!artwork.published && !locals.admin)) {
 		throw error(404, 'Obra no encontrada');
 	}
-	const visitor = visitorId(cookies);
+	const visitor = likeIdentity(locals, cookies);
 	const artist = db
 		.prepare(`SELECT * FROM artists WHERE id = ?`)
 		.get(artwork.artist_id) as Artist;
@@ -40,10 +46,10 @@ export const load: PageServerLoad = ({ params, cookies }) => {
 };
 
 export const actions: Actions = {
-	like: async ({ params, cookies }) => {
+	like: async ({ params, cookies, locals }) => {
 		const artwork = getArtworkBySlug(params.slug);
 		if (!artwork) return fail(404);
-		const visitor = visitorId(cookies);
+		const visitor = likeIdentity(locals, cookies);
 		if (hasLiked(artwork.id, visitor)) {
 			db.prepare(`DELETE FROM likes WHERE artwork_id = ? AND visitor = ?`).run(artwork.id, visitor);
 			return { liked: false, likes: likeCount(artwork.id) };

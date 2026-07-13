@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import ArtworkCard from '$lib/components/ArtworkCard.svelte';
 	let { data, form } = $props();
 	const acc = $derived(data.account);
 </script>
@@ -53,6 +54,22 @@
 		</section>
 	{/if}
 
+	<section class="favs">
+		<h2>Mis obras favoritas</h2>
+		{#if data.favorites.length}
+			<div class="fav-grid">
+				{#each data.favorites as artwork (artwork.id)}
+					<ArtworkCard {artwork} />
+				{/each}
+			</div>
+		{:else}
+			<p class="muted fav-empty">
+				Aún no has guardado ninguna obra. Explora la <a href="/gallery">galería</a> y pulsa el
+				corazón para guardarla aquí.
+			</p>
+		{/if}
+	</section>
+
 	<div class="grid">
 		<section class="panel">
 			<h2>Perfil</h2>
@@ -104,6 +121,11 @@
 	}
 	.artist-box h2 { font-size: 1.2rem; margin-bottom: 0.4rem; }
 	.artist-box .row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+	.favs { margin-bottom: 2rem; }
+	.favs h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+	.fav-grid { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+	.fav-empty { padding: 1.2rem 1.4rem; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
+	.fav-empty a { color: var(--accent); text-decoration: underline; }
 	.grid { display: grid; gap: 1.4rem; grid-template-columns: 1fr 1fr; }
 	.panel {
 		background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);

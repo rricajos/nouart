@@ -45,6 +45,19 @@ export function listArtworksByArtist(artistId: number, onlyPublished = true): Ar
 		.all(artistId) as ArtworkWithArtist[];
 }
 
+/** Obras que un usuario/visitante ha marcado como favoritas (por su identidad de like). */
+export function listFavorites(likeId: string): ArtworkWithArtist[] {
+	return db
+		.prepare(
+			`SELECT ${artworkCols} FROM artworks aw
+			 JOIN artists a ON a.id = aw.artist_id
+			 JOIN likes l ON l.artwork_id = aw.id AND l.visitor = ?
+			 WHERE aw.published = 1
+			 ORDER BY l.created_at DESC`
+		)
+		.all(likeId) as ArtworkWithArtist[];
+}
+
 export function getArtworkBySlug(slug: string): ArtworkWithArtist | undefined {
 	return db
 		.prepare(
