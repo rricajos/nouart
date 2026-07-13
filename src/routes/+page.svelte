@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ArtworkCard from '$lib/components/ArtworkCard.svelte';
 	import Testimonials from '$lib/components/Testimonials.svelte';
+	import { calendarBadge } from '$lib/date';
 	import { site, services } from '$lib/content';
 	let { data } = $props();
 </script>
@@ -24,6 +25,30 @@
 		</div>
 	</div>
 </section>
+
+{#if data.upcoming.length}
+	<section class="wrap block">
+		<div class="block-head">
+			<h2>Próximas actividades</h2>
+			<a href="/agenda" class="muted see-all">Ver la agenda →</a>
+		</div>
+		<div class="agenda-row">
+			{#each data.upcoming as e (e.id)}
+				{@const b = calendarBadge(e.date)}
+				<a class="ev" href="/agenda/{e.slug}">
+					<span class="ev-date">
+						{#if b}<span class="d">{b.day}</span><span class="m">{b.month}</span>
+						{:else}<span class="m">Próx.</span>{/if}
+					</span>
+					<span class="ev-info">
+						<strong>{e.title}</strong>
+						<span class="muted meta">{#if e.time}{e.time}{/if}{#if e.time && e.location} · {/if}{e.location}</span>
+					</span>
+				</a>
+			{/each}
+		</div>
+	</section>
+{/if}
 
 <section class="wrap block">
 	<div class="block-head"><h2>Qué hacemos</h2></div>
@@ -96,6 +121,15 @@
 	.block-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.3rem; }
 	.see-all { font-size: 0.95rem; white-space: nowrap; }
 	.see-all:hover { color: var(--accent); }
+	.agenda-row { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+	.ev { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); transition: border-color 0.15s, transform 0.15s; }
+	.ev:hover { border-color: var(--accent); transform: translateY(-2px); }
+	.ev-date { flex: none; width: 54px; height: 54px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+	.ev-date .d { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; }
+	.ev-date .m { text-transform: uppercase; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; }
+	.ev-info { min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+	.ev-info strong { font-family: var(--serif); font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.ev-info .meta { font-size: 0.85rem; }
 	.services { display: grid; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
 	.service {
 		padding: 1.6rem; background: var(--surface); border: 1px solid var(--line);
