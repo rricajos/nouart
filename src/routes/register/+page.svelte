@@ -49,10 +49,13 @@
 				</div>
 			</div>
 
-			<button type="submit" class="btn btn-primary btn-block">Crear cuenta</button>
+			<button type="submit" class="btn btn-primary btn-block big">Crear cuenta</button>
 		</form>
 
-		<p class="alt muted">¿Ya tienes cuenta? <a href="/login">Entra</a></p>
+		<div class="switch">
+			<span class="switch-q">¿Ya tienes una cuenta?</span>
+			<a href="/login" class="btn btn-block switch-btn">Entrar</a>
+		</div>
 	</div>
 </div>
 
@@ -77,7 +80,9 @@
 	.role-title { font-weight: 600; font-size: 0.95rem; color: var(--text); }
 	.role-desc { font-size: 0.8rem; line-height: 1.35; font-weight: 400; }
 	.btn-block { margin-top: 1.4rem; }
-	.alt { margin: 1.4rem 0 0; text-align: center; font-size: 0.95rem; }
-	.alt a { color: var(--accent); text-decoration: underline; }
+	.big { padding: 0.85rem 1.1rem; font-size: 1.05rem; }
+	.switch { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--line); text-align: center; }
+	.switch-q { display: block; font-size: 1rem; color: var(--muted); margin-bottom: 0.7rem; }
+	.switch-btn { padding: 0.75rem 1.1rem; font-size: 1.02rem; font-weight: 600; }
 	@media (max-width: 420px) { .roles { grid-template-columns: 1fr; } }
 </style>

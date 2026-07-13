@@ -372,7 +372,8 @@
 	.menu-auth .ma-cta { color: var(--accent); font-weight: 600; }
 	.menu-auth .ma-btn { font-size: 1rem; }
 	.menu-auth form { margin: 0; }
-	.acct { color: var(--text); }
+	.acct { color: var(--text); border: 1px solid var(--line); font-weight: 600; }
+	.acct:hover { border-color: var(--accent); background: var(--accent-soft); }
 	.menu-foot { text-align: center; padding: 1.2rem 1.5rem 1.5rem; font-size: 0.9rem; }
 
 	@media (prefers-reduced-motion: reduce) {

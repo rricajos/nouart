@@ -31,14 +31,15 @@
 				<label for="password">Contraseña</label>
 				<input id="password" name="password" type="password" autocomplete="current-password" required />
 			</div>
-			<button type="submit" class="btn btn-primary btn-block">Entrar</button>
+			<button type="submit" class="btn btn-primary btn-block big">Entrar</button>
 		</form>
 
-		<p class="alt muted">
-			<a href="/forgot">¿Olvidaste tu contraseña?</a>
-			<span class="dot">·</span>
-			¿No tienes cuenta? <a href="/register">Regístrate</a>
-		</p>
+		<p class="forgot"><a href="/forgot">¿Olvidaste tu contraseña?</a></p>
+
+		<div class="switch">
+			<span class="switch-q">¿Todavía no tienes cuenta?</span>
+			<a href="/register" class="btn btn-block switch-btn">Crear una cuenta nueva</a>
+		</div>
 	</div>
 </div>
 
@@ -51,7 +52,10 @@
 	h1 { margin-bottom: 0.2rem; }
 	.sub { margin-bottom: 1.6rem; }
 	.btn-block { margin-top: 0.4rem; }
-	.alt { margin: 1.4rem 0 0; text-align: center; font-size: 0.95rem; line-height: 1.8; }
-	.alt a { color: var(--accent); text-decoration: underline; }
-	.dot { margin: 0 0.4rem; opacity: 0.5; }
+	.big { padding: 0.85rem 1.1rem; font-size: 1.05rem; }
+	.forgot { margin: 1rem 0 0; text-align: center; font-size: 0.95rem; }
+	.forgot a { color: var(--accent); text-decoration: underline; }
+	.switch { margin-top: 1.4rem; padding-top: 1.4rem; border-top: 1px solid var(--line); text-align: center; }
+	.switch-q { display: block; font-size: 1rem; color: var(--muted); margin-bottom: 0.7rem; }
+	.switch-btn { padding: 0.75rem 1.1rem; font-size: 1.02rem; font-weight: 600; }
 </style>
