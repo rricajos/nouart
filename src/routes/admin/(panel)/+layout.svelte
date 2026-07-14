@@ -42,9 +42,10 @@
 </div>
 
 <style>
-	.admin { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
-	/* Se estira con la rejilla (align-self:stretch por defecto) → siempre llega al footer. */
-	.side { background: var(--surface); border-right: 1px solid var(--line); padding: 1.2rem; display: flex; flex-direction: column; }
+	/* Flex con align-items:stretch → las columnas se estiran a la altura del contenedor
+	   (min 100vh), así la barra SIEMPRE llega hasta el footer (grid no estira la fila). */
+	.admin { display: flex; align-items: stretch; min-height: 100vh; }
+	.side { width: 230px; flex: none; background: var(--surface); border-right: 1px solid var(--line); padding: 1.2rem; display: flex; flex-direction: column; }
 	.brand { font-family: var(--serif); font-size: 1.25rem; margin-bottom: 1.5rem; }
 	.mark { color: var(--accent); }
 	nav { display: flex; flex-direction: column; gap: 0.15rem; }
@@ -56,10 +57,10 @@
 	.logout-form { margin: 0.6rem 0 0; padding-top: 0.6rem; border-top: 1px solid var(--line); }
 	.logout { display: block; width: 100%; font: inherit; font-size: 0.96rem; color: var(--muted); text-align: left; background: none; border: 0; border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
 	.logout:hover { background: var(--surface-2); color: var(--accent); }
-	.content { padding: 2rem; max-width: 1000px; }
+	.content { flex: 1; min-width: 0; padding: 2rem; max-width: 1000px; }
 	@media (max-width: 720px) {
-		.admin { grid-template-columns: 1fr; }
-		.side { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+		.admin { flex-direction: column; }
+		.side { width: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 		.side .brand { margin: 0 1rem 0 0; }
 		nav { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
 		.logout-form { margin: 0 0 0 auto; padding: 0; border: 0; }
