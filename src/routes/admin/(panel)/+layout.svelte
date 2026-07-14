@@ -30,13 +30,10 @@
 					{#if l.badge}<span class="badge">{l.badge}</span>{/if}
 				</a>
 			{/each}
-		</nav>
-		<div class="side-foot">
-			<a href="/" class="muted small" target="_blank">Ver el sitio ↗</a>
-			<form method="POST" action="/admin/login?/logout">
-				<button class="logout">Salir</button>
+			<form method="POST" action="/admin/login?/logout" class="logout-form">
+				<button type="submit" class="item logout">Salir</button>
 			</form>
-		</div>
+		</nav>
 	</aside>
 
 	<div class="content">
@@ -46,7 +43,8 @@
 
 <style>
 	.admin { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
-	.side { background: var(--surface); border-right: 1px solid var(--line); padding: 1.2rem; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+	/* Se estira con la rejilla (align-self:stretch por defecto) → siempre llega al footer. */
+	.side { background: var(--surface); border-right: 1px solid var(--line); padding: 1.2rem; display: flex; flex-direction: column; }
 	.brand { font-family: var(--serif); font-size: 1.25rem; margin-bottom: 1.5rem; }
 	.mark { color: var(--accent); }
 	nav { display: flex; flex-direction: column; gap: 0.15rem; }
@@ -54,17 +52,18 @@
 	.item:hover { background: var(--surface-2); color: var(--text); }
 	.item.active { background: var(--accent-soft); color: var(--text); font-weight: 600; }
 	.badge { background: var(--accent); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 0.05rem 0.45rem; border-radius: 999px; }
-	.side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 0.8rem; padding-top: 1rem; }
-	.small { font-size: 0.85rem; }
-	.logout { font: inherit; font-size: 0.9rem; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 0.4rem 0.8rem; cursor: pointer; width: 100%; }
-	.logout:hover { border-color: var(--accent); color: var(--text); }
+	/* Salir: última opción del nav, con separador y en tono discreto. */
+	.logout-form { margin: 0.6rem 0 0; padding-top: 0.6rem; border-top: 1px solid var(--line); }
+	.logout { display: block; width: 100%; font: inherit; font-size: 0.96rem; color: var(--muted); text-align: left; background: none; border: 0; border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
+	.logout:hover { background: var(--surface-2); color: var(--accent); }
 	.content { padding: 2rem; max-width: 1000px; }
 	@media (max-width: 720px) {
 		.admin { grid-template-columns: 1fr; }
-		.side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+		.side { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 		.side .brand { margin: 0 1rem 0 0; }
-		nav { flex-direction: row; flex-wrap: wrap; }
-		.side-foot { margin: 0 0 0 auto; flex-direction: row; }
+		nav { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+		.logout-form { margin: 0 0 0 auto; padding: 0; border: 0; }
+		.logout { width: auto; padding: 0.4rem 0.8rem; border: 1px solid var(--line); }
 		.content { padding: 1.2rem; }
 	}
 </style>

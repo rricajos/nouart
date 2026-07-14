@@ -65,7 +65,9 @@
 	.chip.artist { color: var(--accent); border-color: var(--accent-soft); }
 	.chip.pending { background: #fdf1e7; color: #a2560f; border-color: #f2d5b8; }
 	.chip.ok { background: #e8f3ea; color: #1f7a3a; border-color: #cfe6d4; }
-	.actions { display: flex; gap: 0.4rem; justify-content: flex-end; }
+	/* Celda normal (NO flex, o rompe la alineación de la tabla); botones inline a la derecha. */
+	.actions { text-align: right; white-space: nowrap; }
+	.actions form { display: inline-flex; vertical-align: middle; margin-left: 0.4rem; }
 	.actions form { margin: 0; }
 	.btn-mini { font: inherit; font-size: 0.82rem; padding: 0.3rem 0.7rem; border-radius: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; white-space: nowrap; }
 	.btn-mini:hover { border-color: var(--accent); }

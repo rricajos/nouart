@@ -51,7 +51,10 @@
 	td { padding: 0.6rem; border-bottom: 1px solid var(--line); vertical-align: middle; }
 	.thumb { width: 48px; }
 	.thumb img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; }
-	.row-actions { display: flex; gap: 0.5rem; align-items: center; justify-content: flex-end; }
+	/* Celda normal (NO flex, o rompe la alineación de la tabla); botones inline a la derecha. */
+	.row-actions { text-align: right; white-space: nowrap; }
+	.row-actions > a, .row-actions > form { display: inline-flex; vertical-align: middle; }
+	.row-actions > form { margin-left: 0.5rem; }
 	.mini { font-size: 0.85rem; padding: 0.3rem 0.6rem; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; font-family: inherit; }
 	.mini:hover { border-color: var(--accent); }
 	.danger:hover { border-color: #c0392b; color: #c0392b; }
