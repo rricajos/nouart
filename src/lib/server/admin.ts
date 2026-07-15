@@ -37,13 +37,14 @@ export async function saveArtist(form: FormData, existing: Artist | null): Promi
 	}
 
 	const slug = uniqueSlug(name, (s) => artistSlugExists(s), 'artist');
-	const maxSort = (db.prepare(`SELECT COALESCE(MAX(sort),0)+1 AS n FROM artists`).get() as { n: number }).n;
+	// Los artistas se listan por orden ALFABÉTICO, así que ya no calculamos `sort`
+	// (la columna queda en su valor por defecto y sin uso para artistas).
 	const info = db
 		.prepare(
-			`INSERT INTO artists (slug, name, discipline, bio, email, instagram, website, photo, sort)
-			 VALUES (@slug, @name, @discipline, @bio, @email, @instagram, @website, @photo, @sort)`
+			`INSERT INTO artists (slug, name, discipline, bio, email, instagram, website, photo)
+			 VALUES (@slug, @name, @discipline, @bio, @email, @instagram, @website, @photo)`
 		)
-		.run({ ...data, slug, photo: newPhoto, sort: maxSort });
+		.run({ ...data, slug, photo: newPhoto });
 	return Number(info.lastInsertRowid);
 }
 

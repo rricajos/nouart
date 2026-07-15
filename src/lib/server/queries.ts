@@ -13,11 +13,15 @@ const artworkCols = `
 	(SELECT COUNT(*) FROM likes l WHERE l.artwork_id = aw.id) AS likes
 `;
 
+/**
+ * Artistas en orden ALFABÉTICO (más justo y predecible para una asociación que el
+ * orden de alta). ⚠️ El orden NO se delega a SQLite: compara por bytes y dejaría
+ * 'Óscar' o 'Ñuria' detrás de 'Zoe'; localeCompare('es') los coloca donde toca.
+ * La columna `sort` queda sin uso para artistas.
+ */
 export function listArtists(): Artist[] {
-	// ⚠️ El orden NO se delega a SQLite: compara por bytes, así que 'Óscar' o 'Ñuria'
-	// caerían detrás de 'Zoe'. localeCompare('es') los coloca donde toca.
-	return (db.prepare(`SELECT * FROM artists`).all() as Artist[]).sort(
-		(a, b) => a.sort - b.sort || a.name.localeCompare(b.name, 'es')
+	return (db.prepare(`SELECT * FROM artists`).all() as Artist[]).sort((a, b) =>
+		a.name.localeCompare(b.name, 'es')
 	);
 }
 

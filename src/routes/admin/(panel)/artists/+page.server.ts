@@ -8,6 +8,7 @@ interface ArtistRow extends Artist {
 }
 
 export const load: PageServerLoad = () => {
+	// Alfabético (más fácil de localizar a alguien que por orden de alta).
 	// ⚠️ Orden en JS: SQLite compara por bytes y dejaría 'Óscar'/'Ñuria' detrás de 'Zoe'.
 	const artists = (
 		db
@@ -16,7 +17,7 @@ export const load: PageServerLoad = () => {
 				 FROM artists a`
 			)
 			.all() as ArtistRow[]
-	).sort((a, b) => a.sort - b.sort || a.name.localeCompare(b.name, 'es'));
+	).sort((a, b) => a.name.localeCompare(b.name, 'es'));
 	return { artists };
 };
 
