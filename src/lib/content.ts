@@ -28,6 +28,39 @@ export const contact = {
 	youtube: ''
 };
 
+// Temas del formulario de contacto: se eligen ANTES de escribir, fijan el asunto y
+// permiten filtrar los mensajes en el panel. El id se guarda en messages.topic.
+export interface ContactTopic {
+	id: string;
+	label: string;
+	desc: string;
+	subject: string; // asunto del email que recibe la asociación
+}
+
+export const contactTopics: ContactTopic[] = [
+	{
+		id: 'socio',
+		label: 'Quiero asociarme',
+		desc: 'Hacerte socio o socia y participar en las actividades.',
+		subject: 'Alta de socio'
+	},
+	{
+		id: 'artista',
+		label: 'Soy artista',
+		desc: 'Mostrar tu obra o exponer con el colectivo.',
+		subject: 'Artista · mostrar obra'
+	},
+	{
+		id: 'otro',
+		label: 'Otra consulta',
+		desc: 'Colaboraciones, propuestas o cualquier otra cosa.',
+		subject: 'Consulta general'
+	}
+];
+
+export const topicById = (id: string | null | undefined) =>
+	contactTopics.find((t) => t.id === id);
+
 // "Quiénes somos" estructurado, como pide el doc de estructura de la asociación.
 // Cada apartado APARECE SOLO SI tiene contenido → se pueden ir rellenando por fases
 // sin que la página muestre secciones vacías.

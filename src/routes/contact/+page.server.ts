@@ -2,7 +2,7 @@ import { fail } from '@sveltejs/kit';
 import { db, type Attachment } from '$lib/server/db';
 import { sendMail } from '$lib/server/email';
 import { saveAttachment, deleteAttachments, ATTACH_MAX_FILES } from '$lib/server/uploads';
-import { contact } from '$lib/content';
+import { contact, topicById } from '$lib/content';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
@@ -14,7 +14,9 @@ export const actions: Actions = {
 		const email = String(form.get('email') ?? '').trim();
 		const phone = String(form.get('phone') ?? '').trim();
 		const body = String(form.get('body') ?? '').trim();
-		const values = { name, email, phone, body };
+		// Solo aceptamos temas de la lista; cualquier otra cosa cae en "otro".
+		const topic = topicById(String(form.get('topic') ?? '')) ?? topicById('otro')!;
+		const values = { name, email, phone, body, topic: topic.id };
 
 		if (name.length < 2 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || body.length < 2) {
 			return fail(400, { error: 'Revisa tu nombre, email y mensaje.', ...values });
@@ -47,14 +49,15 @@ export const actions: Actions = {
 		// artist_id NULL = mensaje general a la asociación.
 		// user_id → permite al usuario seguir el estado desde /account.
 		db.prepare(
-			`INSERT INTO messages (artist_id, name, email, body, attachments, user_id)
-			 VALUES (NULL, ?, ?, ?, ?, ?)`
+			`INSERT INTO messages (artist_id, name, email, body, attachments, user_id, topic)
+			 VALUES (NULL, ?, ?, ?, ?, ?, ?)`
 		).run(
 			name,
 			email,
 			fullBody,
 			attachments.length ? JSON.stringify(attachments) : null,
-			locals.user?.id ?? null
+			locals.user?.id ?? null,
+			topic.id
 		);
 
 		const to = process.env.CONTACT_FALLBACK || contact.email;
@@ -65,8 +68,8 @@ export const actions: Actions = {
 		await sendMail({
 			to,
 			replyTo: email,
-			subject: `Nou Art · nuevo mensaje de ${name}`,
-			text: `Mensaje desde el formulario de contacto de nouart.org\n\nDe: ${name} <${email}>\n${phone ? `Teléfono: ${phone}\n` : ''}\n${body}${attachNote}`
+			subject: `Nou Art · ${topic.subject} — ${name}`,
+			text: `Mensaje desde el formulario de contacto de nouart.org\n\nTema: ${topic.label}\nDe: ${name} <${email}>\n${phone ? `Teléfono: ${phone}\n` : ''}\n${body}${attachNote}`
 		});
 
 		// tracked = ya está ligado a una cuenta; si no, invitamos a crearla.

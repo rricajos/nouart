@@ -146,6 +146,8 @@ addColumn(`ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 
 addColumn(`ALTER TABLE messages ADD COLUMN attachments TEXT`);
 // Autoría del mensaje → permite al usuario seguir su estado desde /account.
 addColumn(`ALTER TABLE messages ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL`);
+// Tema elegido en las tarjetas previas al formulario (filtra los mensajes en el panel).
+addColumn(`ALTER TABLE messages ADD COLUMN topic TEXT`);
 
 export interface Artist {
 	id: number;
@@ -240,5 +242,6 @@ export interface Message {
 	handled: number;
 	attachments: string | null; // JSON de Attachment[]
 	user_id: number | null;
+	topic: string | null;
 	created_at: string;
 }

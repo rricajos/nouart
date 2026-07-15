@@ -94,6 +94,9 @@
 	];
 	const path = $derived(page.url.pathname);
 	const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+	// En /admin la barra lateral llega hasta abajo: el margen que separa el footer del
+	// contenido en las páginas normales dejaría un hueco entre ambos.
+	const isAdmin = $derived(path.startsWith('/admin'));
 
 	// Etiqueta de la sección actual para la barra superior en móvil.
 	const sections = [
@@ -214,7 +217,7 @@
 </main>
 
 <!-- Footer: último bloque del scroll; en móvil aparece sobre el nav inferior. -->
-<footer class="site-footer" bind:this={footerEl}>
+<footer class="site-footer" class:flush={isAdmin} bind:this={footerEl}>
 	<div class="wrap footer-grid">
 		<div class="foot-brand">
 			<div class="foot-logo">
@@ -354,6 +357,9 @@
 		border-top: 3px solid var(--accent);
 		margin-top: 4rem; padding: 3rem 0 1.5rem;
 	}
+	/* En /admin la barra lateral se estira hasta el footer: sin este margen a 0 quedaría
+	   un hueco de 4rem entre ambos. */
+	.site-footer.flush { margin-top: 0; }
 	/* En oscuro, un pelín más profundo que la página para que se lea como "pozo" */
 	@media (prefers-color-scheme: dark) { .site-footer { --foot-bg: #0d0b08; } }
 	:root[data-theme='light'] .site-footer { --foot-bg: #1b1813; }

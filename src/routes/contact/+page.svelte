@@ -1,8 +1,74 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { contact, site } from '$lib/content';
-	import { ATTACH_HINT, ATTACH_ACCEPT } from '$lib/uploads-limits';
+	import { fly } from 'svelte/transition';
+	import { contact, site, contactTopics, topicById } from '$lib/content';
+	import {
+		ATTACH_HINT,
+		ATTACH_ACCEPT,
+		ATTACH_EXTS,
+		ATTACH_MAX_BYTES,
+		ATTACH_MAX_FILES
+	} from '$lib/uploads-limits';
 	let { data, form } = $props();
+
+	// Paso 1: el tema se elige antes de escribir → fija el asunto y permite filtrar los
+	// mensajes en el panel. Se inicializa desde `form` para no perderlo si falla la
+	// validación (o si el navegador no tiene JS).
+	let topic = $state<string | null>(form?.topic ?? null);
+	const chosen = $derived(topicById(topic));
+
+	// Zona de adjuntos: el <input type=file> real queda oculto pero sigue siendo el que
+	// envía el formulario; aquí solo gestionamos la lista y la sincronizamos con él.
+	let inputEl = $state<HTMLInputElement>();
+	let picked = $state<File[]>([]);
+	let dragOver = $state(false);
+	let fileError = $state('');
+
+	const fmtSize = (b: number) =>
+		b < 1024 * 1024 ? `${Math.round(b / 1024)} KB` : `${(b / 1024 / 1024).toFixed(1)} MB`;
+
+	/** Mismas reglas que el servidor, aquí solo para avisar antes de enviar. */
+	function addFiles(list: File[]) {
+		fileError = '';
+		const next = [...picked];
+		for (const f of list) {
+			const ext = '.' + (f.name.split('.').pop() ?? '').toLowerCase();
+			if (!ATTACH_EXTS.includes(ext)) {
+				fileError = `"${f.name}": solo se admiten imágenes o PDF.`;
+				continue;
+			}
+			if (f.size > ATTACH_MAX_BYTES) {
+				fileError = `"${f.name}" supera los 8 MB.`;
+				continue;
+			}
+			if (next.length >= ATTACH_MAX_FILES) {
+				fileError = `Puedes adjuntar como máximo ${ATTACH_MAX_FILES} archivos.`;
+				break;
+			}
+			if (!next.some((x) => x.name === f.name && x.size === f.size)) next.push(f);
+		}
+		picked = next;
+		syncInput();
+	}
+
+	function removeAt(i: number) {
+		picked = picked.filter((_, j) => j !== i);
+		fileError = '';
+		syncInput();
+	}
+
+	/** Vuelca la lista al input real para que viaje en el envío. */
+	function syncInput() {
+		const dt = new DataTransfer();
+		for (const f of picked) dt.items.add(f);
+		if (inputEl) inputEl.files = dt.files;
+	}
+
+	function onDrop(e: DragEvent) {
+		e.preventDefault();
+		dragOver = false;
+		addFiles(Array.from(e.dataTransfer?.files ?? []));
+	}
 </script>
 
 <svelte:head>
@@ -13,12 +79,24 @@
 <div class="wrap page">
 	<p class="eyebrow">Hablemos</p>
 	<h1>Contacto</h1>
-	<p class="intro muted">
-		¿Quieres participar, proponer una actividad o exponer con nosotros? Escríbenos y te
-		respondemos.
-	</p>
-
-	<div class="layout">
+	{#if !form?.sent && !topic}
+		<!-- Paso 1: elegir tema -->
+		<div in:fly={{ y: 8, duration: 220 }}>
+			<p class="intro muted">
+				¿Sobre qué quieres hablarnos? Elige un tema y tu mensaje llegará mejor clasificado.
+			</p>
+			<div class="topics">
+				{#each contactTopics as t (t.id)}
+					<button type="button" class="tcard" onclick={() => (topic = t.id)}>
+						<span class="tc-label">{t.label}</span>
+						<span class="tc-desc muted">{t.desc}</span>
+						<span class="tc-go">Continuar →</span>
+					</button>
+				{/each}
+			</div>
+		</div>
+	{:else}
+	<div class="layout" in:fly={{ y: 8, duration: 220 }}>
 		<div class="form-col">
 			{#if form?.sent}
 				<div class="sent">
@@ -40,9 +118,16 @@
 					{/if}
 				</div>
 			{:else}
+				{#if chosen}
+					<div class="chosen">
+						<span class="ch-txt">Tema: <strong>{chosen.label}</strong></span>
+						<button type="button" class="ch-change" onclick={() => (topic = null)}>Cambiar</button>
+					</div>
+				{/if}
 				<form method="POST" enctype="multipart/form-data" use:enhance>
 					{#if form?.error}<div class="flash flash-err">{form.error}</div>{/if}
 					<input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
+					<input type="hidden" name="topic" value={topic ?? ''} />
 					<div class="row">
 						<div class="field">
 							<label for="name">Nombre</label>
@@ -62,9 +147,50 @@
 						<textarea id="body" name="body" rows="5" required>{form?.body ?? ''}</textarea>
 					</div>
 					<div class="field">
-						<label for="files">Adjuntos <span class="opt">(opcional)</span></label>
-						<input id="files" name="files" type="file" multiple accept={ATTACH_ACCEPT} />
-						<span class="hint muted">{ATTACH_HINT}</span>
+						<span class="lbl">Adjuntos <span class="opt">(opcional)</span></span>
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<label
+							class="drop"
+							class:over={dragOver}
+							ondragover={(e) => { e.preventDefault(); dragOver = true; }}
+							ondragleave={() => (dragOver = false)}
+							ondrop={onDrop}
+						>
+							<input
+								bind:this={inputEl}
+								id="files"
+								name="files"
+								type="file"
+								multiple
+								accept={ATTACH_ACCEPT}
+								onchange={(e) => addFiles(Array.from(e.currentTarget.files ?? []))}
+							/>
+							<svg class="drop-ico" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="M12 16V4" />
+								<path d="M8 8l4-4 4 4" />
+								<path d="M4 16v2.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V16" />
+							</svg>
+							<span class="drop-main">Arrastra tus archivos o <strong>haz clic para elegir</strong></span>
+							<span class="drop-hint muted">{ATTACH_HINT}</span>
+						</label>
+
+						{#if fileError}<p class="file-err">{fileError}</p>{/if}
+
+						{#if picked.length}
+							<ul class="files">
+								{#each picked as f, i (f.name + f.size)}
+									<li>
+										<span class="f-name">{f.name}</span>
+										<span class="f-size muted">{fmtSize(f.size)}</span>
+										<button type="button" class="f-del" onclick={() => removeAt(i)} aria-label="Quitar {f.name}">
+											<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+												<path d="M6 6l12 12M18 6L6 18" />
+											</svg>
+										</button>
+									</li>
+								{/each}
+							</ul>
+						{/if}
 					</div>
 					<button class="btn btn-primary">Enviar mensaje</button>
 				</form>
@@ -104,6 +230,7 @@
 			</p>
 		</aside>
 	</div>
+	{/if}
 </div>
 
 <style>
@@ -112,7 +239,47 @@
 	.layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; margin-top: 2rem; align-items: start; }
 	.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 	.opt { font-weight: 400; color: var(--muted); }
-	.hint { display: block; font-size: 0.8rem; margin-top: 0.35rem; font-weight: 400; }
+	.lbl { display: block; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.3rem; color: var(--muted); }
+
+	/* Paso 1: tarjetas de tema */
+	.topics { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 2rem; }
+	.tcard {
+		display: flex; flex-direction: column; gap: 0.3rem; text-align: left; cursor: pointer;
+		font: inherit; padding: 1.4rem; border-radius: var(--radius);
+		border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow);
+		transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+	}
+	.tcard:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
+	.tc-label { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; color: var(--text); }
+	.tc-desc { font-size: 0.9rem; line-height: 1.45; }
+	.tc-go { margin-top: 0.7rem; font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+
+	/* Paso 2: tema elegido */
+	.chosen { display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; padding: 0.6rem 0.9rem; margin-bottom: 1.2rem; font-size: 0.92rem; }
+	.ch-change { font: inherit; font-size: 0.88rem; color: var(--accent); background: none; border: 0; cursor: pointer; text-decoration: underline; flex: none; }
+
+	/* Zona de adjuntos: el input real está oculto pero sigue siendo focusable y es el
+	   que envía los archivos (sin JS, el label abre el selector igual). */
+	.drop {
+		position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+		padding: 1.4rem 1rem; text-align: center; cursor: pointer;
+		border: 1.5px dashed var(--line); border-radius: var(--radius); background: var(--surface-2);
+		transition: border-color 0.15s, background 0.15s, color 0.15s;
+	}
+	.drop:hover, .drop.over, .drop:focus-within { border-color: var(--accent); background: var(--accent-soft); }
+	.drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+	.drop-ico { color: var(--accent); margin-bottom: 0.2rem; }
+	.drop-main { font-size: 0.95rem; color: var(--text); }
+	.drop-main strong { color: var(--accent); }
+	.drop-hint { font-size: 0.8rem; }
+
+	.file-err { margin: 0.6rem 0 0; font-size: 0.88rem; color: #c0392b; }
+	.files { list-style: none; padding: 0; margin: 0.7rem 0 0; display: flex; flex-direction: column; gap: 0.4rem; }
+	.files li { display: flex; align-items: center; gap: 0.6rem; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0.45rem 0.6rem 0.45rem 0.8rem; font-size: 0.9rem; }
+	.f-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.f-size { font-size: 0.8rem; flex: none; }
+	.f-del { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 999px; border: 1px solid var(--line); background: none; color: var(--muted); cursor: pointer; }
+	.f-del:hover { border-color: #c0392b; color: #c0392b; }
 	.sent .follow { margin: 1rem 0 0.8rem; }
 	.invite { margin-top: 1.4rem; padding: 1.4rem; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius); }
 	.invite h3 { font-size: 1.1rem; margin-bottom: 0.4rem; }

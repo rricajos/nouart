@@ -10,16 +10,23 @@ interface MessageRow extends Message {
 	artist_slug: string | null;
 }
 
-export const load: PageServerLoad = () => {
-	return {
-		messages: db
-			.prepare(
-				`SELECT m.*, a.name AS artist_name, a.slug AS artist_slug
-				 FROM messages m LEFT JOIN artists a ON a.id = m.artist_id
-				 ORDER BY m.handled ASC, m.created_at DESC`
-			)
-			.all() as MessageRow[]
-	};
+export const load: PageServerLoad = ({ url }) => {
+	// Filtro por tema (?topic=socio). Vacío = todos.
+	const topic = url.searchParams.get('topic') ?? '';
+	const where = topic ? `WHERE m.topic = ?` : '';
+	const sql = `SELECT m.*, a.name AS artist_name, a.slug AS artist_slug
+		 FROM messages m LEFT JOIN artists a ON a.id = m.artist_id
+		 ${where}
+		 ORDER BY m.handled ASC, m.created_at DESC`;
+	const messages = (topic ? db.prepare(sql).all(topic) : db.prepare(sql).all()) as MessageRow[];
+
+	// Recuento por tema para las pestañas del filtro.
+	const counts = db
+		.prepare(`SELECT COALESCE(topic, 'otro') AS topic, COUNT(*) AS n FROM messages GROUP BY 1`)
+		.all() as { topic: string; n: number }[];
+	const total = counts.reduce((s, c) => s + c.n, 0);
+
+	return { messages, topic, counts, total };
 };
 
 export const actions: Actions = {

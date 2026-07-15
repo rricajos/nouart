@@ -1,13 +1,24 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { contactTopics, topicById } from '$lib/content';
 	let { data } = $props();
 	const submit = () => ({ update }: { update: () => Promise<void> }) => update();
+	const countOf = (id: string) => data.counts.find((c) => c.topic === id)?.n ?? 0;
 </script>
 
 <svelte:head><title>Mensajes · Gestión</title></svelte:head>
 
 <h1>Mensajes</h1>
-<p class="muted intro">Mensajes de contacto que el público envía sobre las obras.</p>
+<p class="muted intro">Mensajes de contacto, clasificados por el tema que eligió cada persona.</p>
+
+<nav class="filters">
+	<a class="f" class:on={!data.topic} href="/admin/messages">Todos <span class="n">{data.total}</span></a>
+	{#each contactTopics as t (t.id)}
+		<a class="f" class:on={data.topic === t.id} href="/admin/messages?topic={t.id}">
+			{t.label} <span class="n">{countOf(t.id)}</span>
+		</a>
+	{/each}
+</nav>
 
 {#if data.messages.length}
 	<ul class="list">
@@ -17,6 +28,7 @@
 					<div class="m-head">
 						<strong>{m.name}</strong>
 						<a class="email" href="mailto:{m.email}">{m.email}</a>
+						{#if topicById(m.topic)}<span class="chip topic">{topicById(m.topic)?.label}</span>{/if}
 						{#if m.artist_name}<span class="chip">→ {m.artist_name}</span>{/if}
 						{#if m.user_id}<span class="chip acct">con cuenta</span>{/if}
 						<span class="muted date">{m.created_at.slice(0, 16).replace('T', ' ')}</span>
@@ -53,7 +65,13 @@
 {/if}
 
 <style>
-	.intro { margin-top: -0.5rem; margin-bottom: 1.5rem; }
+	.intro { margin-top: -0.5rem; margin-bottom: 1rem; }
+	.filters { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.4rem; }
+	.f { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; padding: 0.35rem 0.75rem; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: var(--surface); }
+	.f:hover { border-color: var(--accent); color: var(--text); }
+	.f.on { background: var(--accent-soft); border-color: var(--accent); color: var(--text); font-weight: 600; }
+	.f .n { font-size: 0.75rem; font-weight: 700; opacity: 0.7; }
+	.chip.topic { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); font-size: 0.72rem; padding: 0.05rem 0.45rem; border-radius: 999px; font-weight: 600; }
 	.list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
 	.list li { display: flex; gap: 1rem; align-items: flex-start; justify-content: space-between; border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.1rem; background: var(--surface); }
 	.list li.unread { border-color: var(--accent); background: var(--accent-soft); }
