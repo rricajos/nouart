@@ -90,6 +90,23 @@
 			<div class="topics">
 				{#each contactTopics as t (t.id)}
 					<a class="tcard" href="/contact?topic={t.id}">
+						<span class="tc-ico">
+							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								{#if t.icon === 'socio'}
+									<circle cx="9" cy="8" r="3.4" /><path d="M2.5 20c1.2-3.4 3.6-5 6.5-5s5.3 1.6 6.5 5" /><path d="M19 7.5v5M21.5 10h-5" />
+								{:else if t.icon === 'agenda'}
+									<rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4M16 3v4M3 11h18" />
+								{:else if t.icon === 'artista'}
+									<rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="8.5" cy="8.5" r="1.5" /><path d="M21 15l-5-5L5 21" />
+								{:else if t.icon === 'proyecto'}
+									<path d="M9 18h6M10 21.5h4" /><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8V17h7.6v-2.7A6.5 6.5 0 0 0 12 2.5z" />
+								{:else if t.icon === 'colaborar'}
+									<circle cx="8.5" cy="8" r="3.2" /><path d="M2 20c1.1-3.2 3.4-4.8 6.5-4.8s5.4 1.6 6.5 4.8" /><path d="M16.5 4.6a3.2 3.2 0 0 1 0 6.3M18 15.4c2 .7 3.3 2 4 4.1" />
+								{:else}
+									<path d="M20.5 12a7.5 7.5 0 0 1-7.5 7.5H8l-4.5 3v-6A7.5 7.5 0 0 1 11 4.5h2A7.5 7.5 0 0 1 20.5 12z" />
+								{/if}
+							</svg>
+						</span>
 						<span class="tc-label">{t.label}</span>
 						<span class="tc-desc muted">{t.desc}</span>
 						<span class="tc-go">Continuar →</span>
@@ -253,9 +270,17 @@
 	}
 	.tcard:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
 	.tcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-	.tc-label { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; color: var(--text); }
-	.tc-desc { font-size: 0.9rem; line-height: 1.45; }
-	.tc-go { margin-top: 0.7rem; font-size: 0.85rem; font-weight: 600; color: var(--accent); }
+	.tc-ico {
+		display: inline-flex; align-items: center; justify-content: center;
+		width: 40px; height: 40px; border-radius: 10px; margin-bottom: 0.5rem;
+		background: var(--accent-soft); color: var(--accent);
+		transition: background 0.15s, color 0.15s;
+	}
+	.tcard:hover .tc-ico { background: var(--accent); color: #fff; }
+	.tc-label { font-family: var(--serif); font-size: 1.15rem; font-weight: 600; color: var(--text); }
+	.tc-desc { font-size: 0.88rem; line-height: 1.45; }
+	/* mt:auto → el "Continuar" queda alineado abajo aunque las descripciones midan distinto */
+	.tc-go { margin-top: auto; padding-top: 0.7rem; font-size: 0.85rem; font-weight: 600; color: var(--accent); }
 
 	/* Paso 2: tema elegido */
 	.chosen { display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 10px; padding: 0.6rem 0.9rem; margin-bottom: 1.2rem; font-size: 0.92rem; }

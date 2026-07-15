@@ -35,26 +35,54 @@ export interface ContactTopic {
 	label: string;
 	desc: string;
 	subject: string; // asunto del email que recibe la asociación
+	icon: 'socio' | 'agenda' | 'artista' | 'proyecto' | 'colaborar' | 'otro';
 }
 
+// Cubren lo que realmente hace la asociación (talleres, eventos/exposiciones y
+// asesoría de proyectos) más voluntariado/colaboraciones. El último es cajón de
+// sastre. ⚠️ Si añades uno nuevo, su `id` es lo que se guarda en messages.topic.
 export const contactTopics: ContactTopic[] = [
 	{
 		id: 'socio',
 		label: 'Quiero asociarme',
-		desc: 'Hacerte socio o socia y participar en las actividades.',
-		subject: 'Alta de socio'
+		desc: 'Hacerte socio o socia y apoyar la asociación.',
+		subject: 'Alta de socio',
+		icon: 'socio'
+	},
+	{
+		id: 'actividad',
+		label: 'Participar en una actividad',
+		desc: 'Inscribirte o preguntar por un taller, evento o exposición.',
+		subject: 'Actividad · inscripción o consulta',
+		icon: 'agenda'
 	},
 	{
 		id: 'artista',
 		label: 'Soy artista',
 		desc: 'Mostrar tu obra o exponer con el colectivo.',
-		subject: 'Artista · mostrar obra'
+		subject: 'Artista · mostrar obra',
+		icon: 'artista'
+	},
+	{
+		id: 'proyecto',
+		label: 'Propuesta o proyecto',
+		desc: 'Proponernos una actividad o pedir asesoría para tu proyecto cultural.',
+		subject: 'Propuesta · proyecto cultural',
+		icon: 'proyecto'
+	},
+	{
+		id: 'colaborar',
+		label: 'Colaborar o ser voluntario/a',
+		desc: 'Echar una mano, ceder un espacio o apoyar como entidad.',
+		subject: 'Colaboración · voluntariado',
+		icon: 'colaborar'
 	},
 	{
 		id: 'otro',
 		label: 'Otra consulta',
-		desc: 'Colaboraciones, propuestas o cualquier otra cosa.',
-		subject: 'Consulta general'
+		desc: 'Prensa, sugerencias o cualquier otra cosa.',
+		subject: 'Consulta general',
+		icon: 'otro'
 	}
 ];
 
