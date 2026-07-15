@@ -15,7 +15,11 @@ export const actions: Actions = {
 		// Honeypot: los bots rellenan campos ocultos. Fingimos éxito para no darles pistas.
 		if (form.get('website')) return { sent: true, tracked: false };
 		const name = String(form.get('name') ?? '').trim();
-		const email = String(form.get('email') ?? '').trim();
+		// En minúsculas con JS (no con lower() de SQLite: es solo-ASCII y dejaría intactos
+		// los acentos, rompiendo el emparejamiento con la cuenta al hacer seguimiento).
+		const email = String(form.get('email') ?? '')
+			.trim()
+			.toLowerCase();
 		const phone = String(form.get('phone') ?? '').trim();
 		const body = String(form.get('body') ?? '').trim();
 		// Solo aceptamos temas de la lista; cualquier otra cosa cae en "otro".

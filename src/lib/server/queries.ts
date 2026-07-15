@@ -14,9 +14,11 @@ const artworkCols = `
 `;
 
 export function listArtists(): Artist[] {
-	return db
-		.prepare(`SELECT * FROM artists ORDER BY sort, name`)
-		.all() as Artist[];
+	// ⚠️ El orden NO se delega a SQLite: compara por bytes, así que 'Óscar' o 'Ñuria'
+	// caerían detrás de 'Zoe'. localeCompare('es') los coloca donde toca.
+	return (db.prepare(`SELECT * FROM artists`).all() as Artist[]).sort(
+		(a, b) => a.sort - b.sort || a.name.localeCompare(b.name, 'es')
+	);
 }
 
 export function getArtistBySlug(slug: string): Artist | undefined {
@@ -125,6 +127,9 @@ export interface UserMessage {
  * está verificado, también los que mandó antes de registrarse con ese mismo email.
  * ⚠️ La verificación es imprescindible: si no, cualquiera podría registrarse con el
  * email de otra persona y leer sus mensajes.
+ *
+ * ⚠️ `email` DEBE llegar ya en minúsculas desde JS (users.email lo está). No usamos
+ * lower(?) de SQLite porque es solo-ASCII: dejaría 'JOSÉ' → 'josÉ' y no emparejaría.
  */
 export function listUserMessages(
 	userId: number,
@@ -135,7 +140,7 @@ export function listUserMessages(
 		return db
 			.prepare(
 				`SELECT id, body, handled, attachments, created_at FROM messages
-				 WHERE user_id = ? OR (user_id IS NULL AND lower(email) = lower(?))
+				 WHERE user_id = ? OR (user_id IS NULL AND lower(email) = ?)
 				 ORDER BY created_at DESC`
 			)
 			.all(userId, email) as UserMessage[];
