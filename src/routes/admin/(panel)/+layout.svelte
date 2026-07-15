@@ -58,7 +58,9 @@
 	.logout-form { margin: 0.6rem 0 0; padding-top: 0.6rem; border-top: 1px solid var(--line); }
 	.logout { display: block; width: 100%; font: inherit; font-size: 0.96rem; color: var(--muted); text-align: left; background: none; border: 0; border-radius: 8px; padding: 0.55rem 0.8rem; cursor: pointer; }
 	.logout:hover { background: var(--surface-2); color: var(--accent); }
-	.content { flex: 1; min-width: 0; padding: 2rem; max-width: 1000px; }
+	/* min-width:0 + overflow-x:auto → una tabla ancha scrollea DENTRO de esta zona en vez
+	   de desbordar la página entera (las celdas de acciones son nowrap). */
+	.content { flex: 1; min-width: 0; padding: 2rem; max-width: 1000px; overflow-x: auto; }
 	@media (max-width: 720px) {
 		.admin { flex-direction: column; }
 		.side { width: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 0.5rem; }

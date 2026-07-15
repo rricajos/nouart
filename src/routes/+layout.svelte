@@ -433,14 +433,20 @@
 		/* La RAÍZ es el shell fijo de 100dvh y NO scrollea → la barra de URL queda fija.
 		   Marco y navs se anclan a los BORDES del shell (top/bottom), SIN dvh en offsets →
 		   aunque la barra togglee, todo re-ancla junto: cero descuadre. */
-		:global(html) { overflow: hidden; }
+		/* html no scrollea aquí, así que anulamos el scrollbar-gutter:stable del CSS base:
+		   un elemento con overflow:hidden sigue siendo contenedor de scroll y reservaría
+		   una franja muerta (~15px) en navegadores con barra clásica. */
+		:global(html) { overflow: hidden; scrollbar-gutter: auto; }
 		:global(body) { height: 100dvh; overflow: hidden; position: relative; }
 
 		/* .viewport = ÚNICO contenedor scrolleable (scroll interno). El footer es su último
-		   bloque. flex-column + main flex:1 → en páginas cortas el footer baja al fondo. */
+		   bloque. flex-column + main flex:1 → en páginas cortas el footer baja al fondo.
+		   scrollbar-gutter:stable → el ancho del contenido NO cambia haya scroll o no
+		   (en móvil la barra es overlay y no reserva nada, así que sale gratis). */
 		.viewport {
 			display: flex; flex-direction: column; position: absolute; inset: 0;
 			overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+			scrollbar-gutter: stable;
 		}
 
 		/* ENVOLTURA ÚNICA de cristal: overlay anclado a los bordes del shell (inset:0, SIN
