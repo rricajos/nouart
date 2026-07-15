@@ -28,7 +28,7 @@ export const contact = {
 // se pega la URL se convierte en enlace real. Orden = prioridad recomendada.
 // Consejo: no abrir cuentas que no se vayan a mantener (una cuenta abandonada resta).
 export interface Social {
-	id: 'instagram' | 'facebook' | 'whatsapp' | 'youtube';
+	id: 'instagram' | 'facebook' | 'whatsapp' | 'pinterest' | 'youtube';
 	label: string;
 	url: string;
 }
@@ -37,6 +37,7 @@ export const social: Social[] = [
 	{ id: 'instagram', label: 'Instagram', url: '' }, // ← p.ej. 'https://instagram.com/nouart'
 	{ id: 'facebook', label: 'Facebook', url: '' },
 	{ id: 'whatsapp', label: 'WhatsApp', url: '' }, // ← canal de difusión
+	{ id: 'pinterest', label: 'Pinterest', url: '' }, // ← escaparate: tableros de obra
 	{ id: 'youtube', label: 'YouTube', url: '' }
 ];
 
