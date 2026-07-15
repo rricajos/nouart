@@ -260,6 +260,7 @@
 					{#if contact.youtube}<a href={contact.youtube} target="_blank" rel="noopener">YouTube</a>{/if}
 				</span>
 			{/if}
+			<a class="contact-cta" href="/contact">Escríbenos →</a>
 		</div>
 	</div>
 	<div class="wrap foot-bottom">
@@ -364,6 +365,9 @@
 		padding-bottom: 2rem; border-bottom: 1px solid var(--foot-line);
 	}
 	.social { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.2rem; }
+	/* Acceso directo a la página de contacto desde la propia columna de Contacto. */
+	.contact-cta { margin-top: 0.4rem; font-weight: 600; color: var(--foot-accent); }
+	.contact-cta:hover { text-decoration: underline; }
 	.admin-link { color: var(--foot-muted); }
 	.admin-link:hover { color: var(--foot-accent); }
 	.foot-logo { display: flex; align-items: center; gap: 0.5rem; font-family: var(--serif); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--foot-text); }
