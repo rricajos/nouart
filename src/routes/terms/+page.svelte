@@ -54,13 +54,12 @@
 	</section>
 
 	<section>
-		<h2>5. Privacidad y datos personales</h2>
+		<h2>5. Privacidad, cookies y datos identificativos</h2>
 		<p>
-			Tratamos los datos que nos facilitas (nombre, email y, en su caso, los de tu perfil de artista)
-			con la única finalidad de gestionar tu cuenta y las actividades de la asociación. No los
-			cedemos a terceros ni los usamos con fines comerciales. Puedes ejercer tus derechos de acceso,
-			rectificación, supresión y oposición escribiéndonos a
-			<a href="mailto:{contact.email}">{contact.email}</a>.
+			El tratamiento de tus datos personales se detalla en la
+			<a href="/privacy">política de privacidad</a>, y el uso de cookies en la
+			<a href="/cookies">política de cookies</a>. Los datos identificativos de la asociación están
+			en el <a href="/legal">aviso legal</a>.
 		</p>
 	</section>
 

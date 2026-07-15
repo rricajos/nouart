@@ -105,7 +105,7 @@
 
 				<label class="agree">
 					<input type="checkbox" name="terms" required />
-					<span>He leído y acepto los <a href="/terms" target="_blank" rel="noopener">términos y condiciones y la política de privacidad</a>.</span>
+					<span>He leído y acepto los <a href="/terms" target="_blank" rel="noopener">términos y condiciones</a> y la <a href="/privacy" target="_blank" rel="noopener">política de privacidad</a>.</span>
 				</label>
 
 				{#if role === 'artist'}

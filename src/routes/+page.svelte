@@ -21,7 +21,7 @@
 		<p class="lede muted">{site.heroLead}</p>
 		<div class="hero-cta">
 			<a href="/gallery" class="btn btn-primary">Ver la galería</a>
-			<a href="/contact" class="btn">Únete / contacta</a>
+			<a href="/join" class="btn">Hazte socio</a>
 		</div>
 	</div>
 </section>

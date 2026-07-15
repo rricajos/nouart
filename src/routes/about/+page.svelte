@@ -49,6 +49,8 @@
 	.service::before { content: ''; display: block; width: 34px; height: 3px; background: var(--accent); border-radius: 2px; margin-bottom: 1rem; }
 	.service h3 { font-size: 1.15rem; margin-bottom: 0.5rem; }
 	.join { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--line); max-width: 64ch; }
-	.join a { color: var(--accent); text-decoration: underline; }
+	/* Acotado a los enlaces del párrafo: si no, también teñía el .btn-primary de color
+	   acento sobre fondo acento y el texto del botón quedaba invisible. */
+	.join p a { color: var(--accent); text-decoration: underline; }
 	.join .btn { margin-top: 0.5rem; }
 </style>

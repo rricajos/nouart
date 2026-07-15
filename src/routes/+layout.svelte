@@ -88,6 +88,7 @@
 		{ href: '/gallery', label: 'Galería' },
 		{ href: '/artists', label: 'Artistas' },
 		{ href: '/about', label: 'Acerca de' },
+		{ href: '/join', label: 'Hazte socio' },
 		{ href: '/contact', label: 'Contacto' }
 	];
 	const path = $derived(page.url.pathname);
@@ -99,8 +100,16 @@
 		{ test: (p: string) => p.startsWith('/gallery') || p.startsWith('/work'), label: 'Galería' },
 		{ test: (p: string) => p.startsWith('/artist'), label: 'Artistas' },
 		{ test: (p: string) => p.startsWith('/about'), label: 'Acerca de' },
+		{ test: (p: string) => p.startsWith('/board'), label: 'Junta Directiva' },
+		{ test: (p: string) => p.startsWith('/join'), label: 'Hazte socio' },
+		{ test: (p: string) => p.startsWith('/faq'), label: 'Preguntas frecuentes' },
 		{ test: (p: string) => p.startsWith('/contact'), label: 'Contacto' },
-		{ test: (p: string) => p.startsWith('/admin'), label: 'Gestión' }
+		{ test: (p: string) => p.startsWith('/admin'), label: 'Gestión' },
+		{
+			test: (p: string) =>
+				p.startsWith('/legal') || p.startsWith('/privacy') || p.startsWith('/cookies') || p.startsWith('/terms'),
+			label: 'Legal'
+		}
 	];
 	const currentLabel = $derived(sections.find((s) => s.test(path))?.label ?? '');
 	const year = new Date().getFullYear();
@@ -222,19 +231,37 @@
 		<nav class="foot-col">
 			<h4>Asociación</h4>
 			<a href="/about">Acerca de</a>
+			<a href="/board">Junta Directiva</a>
+			<a href="/join">Hazte socio</a>
+			<a href="/faq">Preguntas frecuentes</a>
 			<a href="/contact">Contacto</a>
-			<a href="/terms">Términos y privacidad</a>
-			<a href="/admin">Acceso gestión</a>
+		</nav>
+		<nav class="foot-col">
+			<h4>Legal</h4>
+			<a href="/legal">Aviso legal</a>
+			<a href="/privacy">Privacidad</a>
+			<a href="/cookies">Cookies</a>
+			<a href="/terms">Términos</a>
 		</nav>
 		<div class="foot-col">
 			<h4>Contacto</h4>
 			<span class="muted">{contact.location}</span>
+			{#if contact.address}<span class="muted">{contact.address}</span>{/if}
 			<a href="mailto:{contact.email}">{contact.email}</a>
+			{#if contact.phone}<a href="tel:{contact.phone.replace(/\s/g, '')}">{contact.phone}</a>{/if}
+			{#if contact.hours}<span class="muted">{contact.hours}</span>{/if}
+			{#if contact.instagram || contact.facebook || contact.youtube}
+				<span class="social">
+					{#if contact.instagram}<a href={contact.instagram} target="_blank" rel="noopener">Instagram</a>{/if}
+					{#if contact.facebook}<a href={contact.facebook} target="_blank" rel="noopener">Facebook</a>{/if}
+					{#if contact.youtube}<a href={contact.youtube} target="_blank" rel="noopener">YouTube</a>{/if}
+				</span>
+			{/if}
 		</div>
 	</div>
 	<div class="wrap foot-bottom">
 		<span>© {year} Nou Art · Asociación sin ánimo de lucro</span>
-		<span class="muted">Nou Barris, Barcelona</span>
+		<a class="admin-link" href="/admin">Acceso gestión</a>
 	</div>
 </footer>
 </div><!-- /.viewport -->
@@ -321,9 +348,12 @@
 
 	.footer-grid {
 		display: grid; gap: 2rem;
-		grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+		grid-template-columns: 1.5fr 1fr 1.1fr 0.8fr 1.1fr;
 		padding-bottom: 2rem; border-bottom: 1px solid var(--foot-line);
 	}
+	.social { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.2rem; }
+	.admin-link { color: var(--foot-muted); }
+	.admin-link:hover { color: var(--foot-accent); }
 	.foot-logo { display: flex; align-items: center; gap: 0.5rem; font-family: var(--serif); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.6rem; color: var(--foot-text); }
 	.foot-brand p { max-width: 34ch; font-size: 0.95rem; margin: 0; color: var(--foot-muted); }
 	.foot-col { display: flex; flex-direction: column; gap: 0.5rem; }

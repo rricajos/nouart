@@ -20,8 +20,93 @@ export const contact = {
 	location: 'Nou Barris, Barcelona',
 	email: 'hola@nouart.org',
 	phone: '', // ← teléfono real (opcional); vacío = no se muestra
-	hours: '' // ← p.ej. 'Lunes a viernes · 17:00–20:00'; vacío = no se muestra
+	hours: '', // ← p.ej. 'Lunes a viernes · 17:00–20:00'; vacío = no se muestra
+	address: '', // ← dirección postal para la página de contacto; vacío = no se muestra
+	// Redes sociales; vacío = no se muestra el enlace.
+	instagram: '', // ← p.ej. 'https://instagram.com/nouart'
+	facebook: '',
+	youtube: ''
 };
+
+// ⚠️ IDENTIDAD LEGAL — OBLIGATORIO rellenar antes de considerar el sitio publicado.
+// Estos datos son los que exige la LSSI en el Aviso Legal y la normativa de datos
+// (GDPR/LOPDGDD) en la Política de Privacidad. Mientras estén vacíos, las páginas
+// legales muestran un aviso de "pendiente" en lugar de inventar datos.
+export const org = {
+	legalName: '', // ← nombre legal completo, p.ej. 'Associació Cultural Nou Art'
+	nif: '', // ← CIF/NIF de la asociación
+	address: '', // ← domicilio social completo
+	registry: '', // ← Registro de Asociaciones y nº de inscripción
+	email: 'hola@nouart.org'
+};
+
+/** true cuando la identidad legal está completa (las páginas legales dejan el aviso). */
+export const orgReady = Boolean(org.legalName && org.nif && org.address);
+
+// --- Hazte socio ---
+export interface Fee {
+	name: string;
+	price: string;
+	note?: string;
+}
+
+export const membership = {
+	lead: 'Hacerte socio o socia de Nou Art es apoyar la cultura de barrio y formar parte de una comunidad que crea, comparte y participa en Nou Barris.',
+	// Ventajas — REVISAR con la asociación (son propuestas razonables, no oficiales).
+	benefits: [
+		'Participación en talleres y actividades, con condiciones preferentes.',
+		'Prioridad de inscripción en actividades con plazas limitadas.',
+		'Posibilidad de exponer y difundir tu obra dentro del colectivo.',
+		'Información anticipada de la agenda y las convocatorias.',
+		'Voz y voto en la asamblea de la asociación.'
+	],
+	// ⚠️ CUOTAS — RELLENAR. Vacío = la página invita a consultar por contacto
+	// (no publicamos importes inventados).
+	fees: [] as Fee[],
+	steps: [
+		'Escríbenos con tus datos y te explicamos el proceso.',
+		'Te confirmamos la cuota y la forma de pago vigente.',
+		'Te damos de alta y pasas a formar parte de la asociación.'
+	]
+};
+
+// --- Junta directiva --- ⚠️ RELLENAR. Vacío = la página muestra aviso de actualización.
+export interface BoardMember {
+	role: string; // p.ej. 'Presidencia'
+	name: string;
+	bio?: string;
+	photo?: string; // nombre de fichero subido a /uploads, opcional
+}
+
+export const board: BoardMember[] = [];
+
+// --- Preguntas frecuentes --- (revisar/ampliar con la asociación)
+export const faq: { q: string; a: string }[] = [
+	{
+		q: '¿Cómo me hago socio o socia?',
+		a: 'Desde la página "Hazte socio" te explicamos las ventajas y el proceso. Escríbenos y te acompañamos en el alta.'
+	},
+	{
+		q: '¿Hay que ser artista para participar?',
+		a: 'No. Nou Art está abierta a cualquier persona interesada en la cultura del barrio, seas artista, vecina o simplemente tengas ganas de participar.'
+	},
+	{
+		q: '¿Cómo puedo participar en las actividades?',
+		a: 'Consulta la Agenda: cada actividad indica fecha, hora y lugar. Si necesitas inscripción o más información, escríbenos desde Contacto.'
+	},
+	{
+		q: 'Soy artista, ¿cómo muestro mi obra?',
+		a: 'Crea una cuenta de tipo Artista. El equipo revisa la solicitud y, al aprobarla, podrás editar tu perfil y publicar tu obra desde tu estudio.'
+	},
+	{
+		q: '¿Cómo puedo colaborar sin ser socio?',
+		a: 'Puedes colaborar como voluntariado, cediendo espacios o proponiendo proyectos conjuntos. Escríbenos y lo hablamos.'
+	},
+	{
+		q: '¿Qué hago si no puedo asistir a una actividad?',
+		a: 'Avísanos cuanto antes por email para poder liberar tu plaza y que otra persona pueda aprovecharla.'
+	}
+];
 
 export interface Service {
 	title: string;
