@@ -80,13 +80,14 @@ export async function saveArtwork(form: FormData, existing: Artwork | null): Pro
 
 	const artistName = (db.prepare(`SELECT name FROM artists WHERE id=?`).get(artistId) as { name: string }).name;
 	const slug = uniqueSlug(`${artistName}-${title}`, (s) => artworkSlugExists(s), 'work');
-	const maxSort = (db.prepare(`SELECT COALESCE(MAX(sort),0)+1 AS n FROM artworks`).get() as { n: number }).n;
+	// Las obras se listan por fecha (lo más reciente primero), así que ya no calculamos
+	// `sort` (la columna queda en su valor por defecto y sin uso para obras).
 	const info = db
 		.prepare(
-			`INSERT INTO artworks (slug, title, artist_id, description, year, medium, published, image, sort)
-			 VALUES (@slug, @title, @artist_id, @description, @year, @medium, @published, @image, @sort)`
+			`INSERT INTO artworks (slug, title, artist_id, description, year, medium, published, image)
+			 VALUES (@slug, @title, @artist_id, @description, @year, @medium, @published, @image)`
 		)
-		.run({ ...data, slug, image: newImage, sort: maxSort });
+		.run({ ...data, slug, image: newImage });
 	return Number(info.lastInsertRowid);
 }
 

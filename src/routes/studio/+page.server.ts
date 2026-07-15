@@ -16,7 +16,7 @@ export const load: PageServerLoad = ({ locals }) => {
 		: undefined;
 	const artworks = artist
 		? (db
-				.prepare(`SELECT * FROM artworks WHERE artist_id = ? ORDER BY sort, created_at DESC`)
+				.prepare(`SELECT * FROM artworks WHERE artist_id = ? ORDER BY created_at DESC, id DESC`)
 				.all(artist.id) as Artwork[])
 		: [];
 	return { artist: artist ?? null, approved: u.approved, artworks };

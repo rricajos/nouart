@@ -21,7 +21,7 @@ export const load: PageServerLoad = () => {
 				`SELECT w.id, w.slug, w.title, w.year, w.image, w.published, a.name AS artist_name,
 				 (SELECT COUNT(*) FROM likes l WHERE l.artwork_id = w.id) AS likes
 				 FROM artworks w JOIN artists a ON a.id = w.artist_id
-				 ORDER BY w.sort, w.created_at DESC`
+				 ORDER BY w.created_at DESC, w.id DESC`
 			)
 			.all() as ArtworkRow[]
 	};

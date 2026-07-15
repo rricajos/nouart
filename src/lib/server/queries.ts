@@ -35,7 +35,7 @@ export function listPublishedArtworks(): ArtworkWithArtist[] {
 			`SELECT ${artworkCols} FROM artworks aw
 			 JOIN artists a ON a.id = aw.artist_id
 			 WHERE aw.published = 1
-			 ORDER BY aw.sort, aw.created_at DESC`
+			 ORDER BY aw.created_at DESC, aw.id DESC`
 		)
 		.all() as ArtworkWithArtist[];
 }
@@ -46,7 +46,7 @@ export function listArtworksByArtist(artistId: number, onlyPublished = true): Ar
 			`SELECT ${artworkCols} FROM artworks aw
 			 JOIN artists a ON a.id = aw.artist_id
 			 WHERE aw.artist_id = ? ${onlyPublished ? 'AND aw.published = 1' : ''}
-			 ORDER BY aw.sort, aw.created_at DESC`
+			 ORDER BY aw.created_at DESC, aw.id DESC`
 		)
 		.all(artistId) as ArtworkWithArtist[];
 }
