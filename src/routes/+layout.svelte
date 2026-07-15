@@ -308,6 +308,15 @@
 	.brand { display: flex; align-items: center; gap: 0.55rem; font-family: var(--serif); font-size: 1.35rem; font-weight: 600; }
 	.brand-mark { display: block; border-radius: 8px; }
 	.desk-nav { display: flex; gap: 0.35rem; margin-left: auto; }
+	/* Franja intermedia (entre el móvil a 820px y el escritorio amplio): con 8 enlaces
+	   + "Entrar" el nav no cabe (~1066px necesarios). Encogemos y dejamos solo el
+	   logotipo para que no se desborde. */
+	@media (min-width: 821px) and (max-width: 1100px) {
+		.desk-nav { gap: 0.1rem; }
+		.navlink { padding: 0.35rem 0.5rem; font-size: 0.88rem; }
+		.brand-name { display: none; }
+		.header-inner { gap: 0.6rem; }
+	}
 	.navlink {
 		padding: 0.4rem 0.8rem; border-radius: 999px; font-size: 0.95rem; color: var(--muted);
 		transition: color 0.15s, background 0.15s; white-space: nowrap;

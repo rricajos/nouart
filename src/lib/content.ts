@@ -28,6 +28,17 @@ export const contact = {
 	youtube: ''
 };
 
+// "Quiénes somos" estructurado, como pide el doc de estructura de la asociación.
+// Cada apartado APARECE SOLO SI tiene contenido → se pueden ir rellenando por fases
+// sin que la página muestre secciones vacías.
+export const identity = {
+	history: '', // ← Historia: cómo y cuándo nace la asociación
+	mission: '', // ← Misión: a qué se dedica (si se deja vacío se usa site.about)
+	vision: '', // ← Visión: dónde quiere llegar
+	values: [] as string[], // ← Valores, p.ej. ['Proximidad', 'Cooperación']
+	goals: [] as string[] // ← Objetivos concretos
+};
+
 // ⚠️ IDENTIDAD LEGAL — OBLIGATORIO rellenar antes de considerar el sitio publicado.
 // Estos datos son los que exige la LSSI en el Aviso Legal y la normativa de datos
 // (GDPR/LOPDGDD) en la Política de Privacidad. Mientras estén vacíos, las páginas
