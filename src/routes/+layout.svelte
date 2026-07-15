@@ -3,7 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/state';
 	import { afterNavigate } from '$app/navigation';
-	import { site, contact } from '$lib/content';
+	import { site, contact, launched } from '$lib/content';
 	import SocialIcons from '$lib/components/SocialIcons.svelte';
 	let { children, data } = $props();
 	const user = $derived(data.user);
@@ -130,6 +130,10 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<meta name="theme-color" content="#b23a2e" />
+	{#if !launched}
+		<!-- Sitio en preparación: contenido de demo + legales sin completar. Ver `launched`. -->
+		<meta name="robots" content="noindex, nofollow" />
+	{/if}
 	<meta property="og:site_name" content="Nou Art" />
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content="Nou Art — Cultura que une a la comunidad" />

@@ -2,6 +2,19 @@
 // datos de contacto). Un único sitio donde tocar las cosas "de brochure".
 // Adaptado del sitio original (SITE123) manteniendo el estilo propio.
 
+/**
+ * ⚠️ INTERRUPTOR DE LANZAMIENTO.
+ * Mientras sea `false`, el sitio pide a los buscadores que NO lo indexen (robots.txt
+ * + meta robots). Es lo que toca antes de lanzar: ahora mismo la web contiene
+ * contenido de DEMO (artistas, obras, comentarios y testimonios inventados para ver
+ * el diseño) y las páginas legales están sin completar. Que Google indexe artistas
+ * que no existen, atribuidos a la asociación, sería un problema real.
+ *
+ * PONER EN `true` cuando: (1) el contenido de demo esté sustituido por el real,
+ * (2) `org` tenga la identidad legal y (3) los testimonios sean auténticos.
+ */
+export const launched = false;
+
 export const site = {
 	name: 'Nou Art',
 	tagline: 'Cultura que une a la comunidad',
