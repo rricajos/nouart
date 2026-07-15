@@ -111,6 +111,43 @@ export function getEventBySlug(slug: string): Event | undefined {
 	return db.prepare(`SELECT * FROM events WHERE slug = ?`).get(slug) as Event | undefined;
 }
 
+// --- Mensajes del usuario (seguimiento desde /account) ---
+export interface UserMessage {
+	id: number;
+	body: string;
+	handled: number;
+	attachments: string | null;
+	created_at: string;
+}
+
+/**
+ * Mensajes de un usuario: los enviados con sesión (user_id) y, SOLO si su email
+ * está verificado, también los que mandó antes de registrarse con ese mismo email.
+ * ⚠️ La verificación es imprescindible: si no, cualquiera podría registrarse con el
+ * email de otra persona y leer sus mensajes.
+ */
+export function listUserMessages(
+	userId: number,
+	email: string,
+	emailVerified: boolean
+): UserMessage[] {
+	if (emailVerified) {
+		return db
+			.prepare(
+				`SELECT id, body, handled, attachments, created_at FROM messages
+				 WHERE user_id = ? OR (user_id IS NULL AND lower(email) = lower(?))
+				 ORDER BY created_at DESC`
+			)
+			.all(userId, email) as UserMessage[];
+	}
+	return db
+		.prepare(
+			`SELECT id, body, handled, attachments, created_at FROM messages
+			 WHERE user_id = ? ORDER BY created_at DESC`
+		)
+		.all(userId) as UserMessage[];
+}
+
 // --- Noticias ---
 /** Noticias publicadas, de más reciente a más antigua. */
 export function listPublishedNews(limit?: number): News[] {

@@ -4,9 +4,14 @@ import { join } from 'node:path';
 
 export const DATA_DIR = process.env.DATA_DIR ?? join(process.cwd(), 'data');
 export const UPLOADS_DIR = join(DATA_DIR, 'uploads');
+/** Adjuntos del formulario de contacto. ⚠️ NO se sirve públicamente (a diferencia de
+ *  UPLOADS_DIR): solo se descargan desde el panel con sesión de admin, porque pueden
+ *  contener datos personales (CV, dossier…). */
+export const ATTACHMENTS_DIR = join(DATA_DIR, 'attachments');
 
 if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
 if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true });
+if (!existsSync(ATTACHMENTS_DIR)) mkdirSync(ATTACHMENTS_DIR, { recursive: true });
 
 export const db = new Database(join(DATA_DIR, 'nouart.db'));
 db.pragma('journal_mode = WAL');
@@ -137,6 +142,10 @@ function addColumn(sql: string) {
 }
 addColumn(`ALTER TABLE comments ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL`);
 addColumn(`ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0`);
+// Adjuntos del formulario de contacto (JSON: [{file,name,size}]).
+addColumn(`ALTER TABLE messages ADD COLUMN attachments TEXT`);
+// Autoría del mensaje → permite al usuario seguir su estado desde /account.
+addColumn(`ALTER TABLE messages ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE SET NULL`);
 
 export interface Artist {
 	id: number;
@@ -216,6 +225,12 @@ export interface User {
 	created_at: string;
 }
 
+export interface Attachment {
+	file: string; // nombre en disco (aleatorio)
+	name: string; // nombre original mostrado
+	size: number;
+}
+
 export interface Message {
 	id: number;
 	artist_id: number | null;
@@ -223,5 +238,7 @@ export interface Message {
 	email: string;
 	body: string;
 	handled: number;
+	attachments: string | null; // JSON de Attachment[]
+	user_id: number | null;
 	created_at: string;
 }

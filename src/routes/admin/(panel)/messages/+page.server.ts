@@ -1,5 +1,6 @@
 import { fail } from '@sveltejs/kit';
 import { db } from '$lib/server/db';
+import { deleteAttachments } from '$lib/server/uploads';
 import type { Actions, PageServerLoad } from './$types';
 
 import type { Message } from '$lib/server/db';
@@ -31,7 +32,12 @@ export const actions: Actions = {
 	delete: async ({ request }) => {
 		const id = Number((await request.formData()).get('id'));
 		if (!id) return fail(400);
+		// Borra también los adjuntos del disco: si no, quedan huérfanos ocupando espacio.
+		const row = db.prepare(`SELECT attachments FROM messages WHERE id = ?`).get(id) as
+			| { attachments: string | null }
+			| undefined;
 		db.prepare(`DELETE FROM messages WHERE id = ?`).run(id);
+		await deleteAttachments(row?.attachments);
 		return { done: true };
 	}
 };

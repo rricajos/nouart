@@ -54,6 +54,40 @@
 		</section>
 	{/if}
 
+	<section class="msgs">
+		<h2>Mis mensajes</h2>
+		{#if data.messages.length}
+			<ul class="msg-list">
+				{#each data.messages as m (m.id)}
+					<li>
+						<div class="m-head">
+							<span class="m-date muted">{m.created_at.slice(0, 10)}</span>
+							<span class="m-state" class:done={m.handled}>
+								{m.handled ? 'Gestionado' : 'Recibido'}
+							</span>
+						</div>
+						<p class="m-body">{m.body}</p>
+						{#if m.attachments}
+							<p class="m-att muted">
+								{JSON.parse(m.attachments).length} archivo(s) adjunto(s)
+							</p>
+						{/if}
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p class="muted msg-empty">
+				Aún no nos has escrito. Puedes hacerlo desde <a href="/contact">contacto</a> y aquí verás
+				el estado de tus mensajes.
+			</p>
+		{/if}
+		{#if !acc.email_verified}
+			<p class="muted msg-note">
+				Verifica tu email para ver también los mensajes que enviaste antes de crear la cuenta.
+			</p>
+		{/if}
+	</section>
+
 	<section class="favs">
 		<h2>Mis obras favoritas</h2>
 		{#if data.favorites.length}
@@ -121,6 +155,20 @@
 	}
 	.artist-box h2 { font-size: 1.2rem; margin-bottom: 0.4rem; }
 	.artist-box .row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+	.msgs { margin-bottom: 2rem; }
+	.msgs h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+	.msg-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.8rem; }
+	.msg-list li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem 1.2rem; }
+	.m-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 0.5rem; }
+	.m-date { font-size: 0.85rem; }
+	.m-state { font-size: 0.78rem; font-weight: 600; padding: 0.15rem 0.6rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+	.m-state.done { background: #e8f3ea; color: #1f7a3a; }
+	.m-body { margin: 0; white-space: pre-wrap; line-height: 1.6; font-size: 0.95rem; }
+	.m-att { margin: 0.5rem 0 0; font-size: 0.85rem; }
+	.msg-empty { padding: 1.2rem 1.4rem; background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); }
+	.msg-empty a { color: var(--accent); text-decoration: underline; }
+	.msg-note { margin: 0.8rem 0 0; font-size: 0.85rem; }
+	@media (prefers-color-scheme: dark) { .m-state.done { background: #16301f; color: #7fd39a; } }
 	.favs { margin-bottom: 2rem; }
 	.favs h2 { font-size: 1.2rem; margin-bottom: 1rem; }
 	.fav-grid { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }

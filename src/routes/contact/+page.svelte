@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { contact, site } from '$lib/content';
-	let { form } = $props();
+	import { ATTACH_HINT, ATTACH_ACCEPT } from '$lib/uploads-limits';
+	let { data, form } = $props();
 </script>
 
 <svelte:head>
@@ -20,9 +21,26 @@
 	<div class="layout">
 		<div class="form-col">
 			{#if form?.sent}
-				<div class="flash flash-ok">¡Gracias! Hemos recibido tu mensaje y te responderemos pronto.</div>
+				<div class="sent">
+					<div class="flash flash-ok">¡Gracias! Hemos recibido tu mensaje y te responderemos pronto.</div>
+					{#if form.tracked}
+						<p class="muted follow">
+							Puedes seguir el estado de tu mensaje desde tu cuenta.
+						</p>
+						<a href="/account" class="btn btn-primary">Ver mis mensajes</a>
+					{:else if !data.user}
+						<div class="invite">
+							<h3>¿Quieres seguir el estado de tu mensaje?</h3>
+							<p class="muted">
+								Crea una cuenta con este mismo email y verás aquí cuándo lo hemos gestionado,
+								además de tu historial de mensajes.
+							</p>
+							<a href="/login?next=/account" class="btn btn-primary">Crear cuenta o entrar</a>
+						</div>
+					{/if}
+				</div>
 			{:else}
-				<form method="POST" use:enhance>
+				<form method="POST" enctype="multipart/form-data" use:enhance>
 					{#if form?.error}<div class="flash flash-err">{form.error}</div>{/if}
 					<input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
 					<div class="row">
@@ -42,6 +60,11 @@
 					<div class="field">
 						<label for="body">Mensaje</label>
 						<textarea id="body" name="body" rows="5" required>{form?.body ?? ''}</textarea>
+					</div>
+					<div class="field">
+						<label for="files">Adjuntos <span class="opt">(opcional)</span></label>
+						<input id="files" name="files" type="file" multiple accept={ATTACH_ACCEPT} />
+						<span class="hint muted">{ATTACH_HINT}</span>
 					</div>
 					<button class="btn btn-primary">Enviar mensaje</button>
 				</form>
@@ -89,6 +112,11 @@
 	.layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; margin-top: 2rem; align-items: start; }
 	.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 	.opt { font-weight: 400; color: var(--muted); }
+	.hint { display: block; font-size: 0.8rem; margin-top: 0.35rem; font-weight: 400; }
+	.sent .follow { margin: 1rem 0 0.8rem; }
+	.invite { margin-top: 1.4rem; padding: 1.4rem; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: var(--radius); }
+	.invite h3 { font-size: 1.1rem; margin-bottom: 0.4rem; }
+	.invite p { margin-bottom: 1rem; }
 	.hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
 	.info { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow); }
 	.info h2 { font-size: 1.3rem; margin-bottom: 1rem; }
