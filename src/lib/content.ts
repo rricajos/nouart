@@ -21,12 +21,27 @@ export const contact = {
 	email: 'hola@nouart.org',
 	phone: '', // ← teléfono real (opcional); vacío = no se muestra
 	hours: '', // ← p.ej. 'Lunes a viernes · 17:00–20:00'; vacío = no se muestra
-	address: '', // ← dirección postal para la página de contacto; vacío = no se muestra
-	// Redes sociales; vacío = no se muestra el enlace.
-	instagram: '', // ← p.ej. 'https://instagram.com/nouart'
-	facebook: '',
-	youtube: ''
+	address: '' // ← dirección postal para la página de contacto; vacío = no se muestra
 };
+
+// Redes sociales. Con `url` vacía el icono sale apagado y con "Próximamente"; en cuanto
+// se pega la URL se convierte en enlace real. Orden = prioridad recomendada.
+// Consejo: no abrir cuentas que no se vayan a mantener (una cuenta abandonada resta).
+export interface Social {
+	id: 'instagram' | 'facebook' | 'whatsapp' | 'youtube';
+	label: string;
+	url: string;
+}
+
+export const social: Social[] = [
+	{ id: 'instagram', label: 'Instagram', url: '' }, // ← p.ej. 'https://instagram.com/nouart'
+	{ id: 'facebook', label: 'Facebook', url: '' },
+	{ id: 'whatsapp', label: 'WhatsApp', url: '' }, // ← canal de difusión
+	{ id: 'youtube', label: 'YouTube', url: '' }
+];
+
+/** Redes ya activas (con URL). Vacío = aún no hay ninguna. */
+export const activeSocial = () => social.filter((s) => s.url);
 
 // Temas del formulario de contacto: se eligen ANTES de escribir, fijan el asunto y
 // permiten filtrar los mensajes en el panel. El id se guarda en messages.topic.

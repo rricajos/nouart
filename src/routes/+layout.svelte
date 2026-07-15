@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { afterNavigate } from '$app/navigation';
 	import { site, contact } from '$lib/content';
+	import SocialIcons from '$lib/components/SocialIcons.svelte';
 	let { children, data } = $props();
 	const user = $derived(data.user);
 
@@ -225,6 +226,7 @@
 				<span>Nou Art</span>
 			</div>
 			<p class="muted">Asociación de artistas de Nou Barris. Arte del barrio, en abierto.</p>
+			<SocialIcons onDark />
 		</div>
 		<nav class="foot-col">
 			<h4>Explorar</h4>
@@ -256,13 +258,6 @@
 			<a href="mailto:{contact.email}">{contact.email}</a>
 			{#if contact.phone}<a href="tel:{contact.phone.replace(/\s/g, '')}">{contact.phone}</a>{/if}
 			{#if contact.hours}<span class="muted">{contact.hours}</span>{/if}
-			{#if contact.instagram || contact.facebook || contact.youtube}
-				<span class="social">
-					{#if contact.instagram}<a href={contact.instagram} target="_blank" rel="noopener">Instagram</a>{/if}
-					{#if contact.facebook}<a href={contact.facebook} target="_blank" rel="noopener">Facebook</a>{/if}
-					{#if contact.youtube}<a href={contact.youtube} target="_blank" rel="noopener">YouTube</a>{/if}
-				</span>
-			{/if}
 			<a class="contact-cta" href="/contact">Escríbenos →</a>
 		</div>
 	</div>
@@ -370,7 +365,6 @@
 		grid-template-columns: 1.5fr 1fr 1.1fr 0.8fr 1.1fr;
 		padding-bottom: 2rem; border-bottom: 1px solid var(--foot-line);
 	}
-	.social { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 0.2rem; }
 	/* Acceso directo a la página de contacto desde la propia columna de Contacto. */
 	.contact-cta { margin-top: 0.4rem; font-weight: 600; color: var(--foot-accent); }
 	.contact-cta:hover { text-decoration: underline; }
