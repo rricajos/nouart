@@ -268,7 +268,11 @@
 	.lbl { display: block; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.3rem; color: var(--muted); }
 
 	/* Paso 1: tarjetas de tema */
-	.topics { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 2rem; }
+	/* 3 columnas fijas → los 6 temas quedan 3+3. Con auto-fit entraban 5 y dejaban la
+	   última tarjeta huérfana en una segunda fila. */
+	.topics { display: grid; gap: 1rem; grid-template-columns: repeat(3, 1fr); margin-top: 2rem; }
+	@media (max-width: 900px) { .topics { grid-template-columns: repeat(2, 1fr); } }
+	@media (max-width: 560px) { .topics { grid-template-columns: 1fr; } }
 	.tcard {
 		display: flex; flex-direction: column; gap: 0.3rem; text-align: left; cursor: pointer;
 		font: inherit; padding: 1.4rem; border-radius: var(--radius);
