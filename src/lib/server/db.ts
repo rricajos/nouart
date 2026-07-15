@@ -81,6 +81,18 @@ CREATE TABLE IF NOT EXISTS events (
 	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS news (
+	id          INTEGER PRIMARY KEY AUTOINCREMENT,
+	slug        TEXT NOT NULL UNIQUE,
+	title       TEXT NOT NULL,
+	summary     TEXT NOT NULL DEFAULT '',
+	body        TEXT NOT NULL DEFAULT '',
+	date        TEXT NOT NULL DEFAULT '',         -- YYYY-MM-DD (fecha de publicación)
+	image       TEXT,
+	published   INTEGER NOT NULL DEFAULT 1,
+	created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS users (
 	id             INTEGER PRIMARY KEY AUTOINCREMENT,
 	name           TEXT NOT NULL,
@@ -173,6 +185,18 @@ export interface Event {
 	date: string;
 	time: string;
 	location: string;
+	image: string | null;
+	published: number;
+	created_at: string;
+}
+
+export interface News {
+	id: number;
+	slug: string;
+	title: string;
+	summary: string;
+	body: string;
+	date: string;
 	image: string | null;
 	published: number;
 	created_at: string;

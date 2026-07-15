@@ -1,4 +1,4 @@
-import { db, type Artist, type Artwork, type Comment, type Event } from './db';
+import { db, type Artist, type Artwork, type Comment, type Event, type News } from './db';
 
 export interface ArtworkWithArtist extends Artwork {
 	artist_name: string;
@@ -109,4 +109,15 @@ export function listPublishedEvents(): { upcoming: Event[]; past: Event[] } {
 
 export function getEventBySlug(slug: string): Event | undefined {
 	return db.prepare(`SELECT * FROM events WHERE slug = ?`).get(slug) as Event | undefined;
+}
+
+// --- Noticias ---
+/** Noticias publicadas, de más reciente a más antigua. */
+export function listPublishedNews(limit?: number): News[] {
+	const sql = `SELECT * FROM news WHERE published = 1 ORDER BY (date = '') ASC, date DESC, created_at DESC`;
+	return (limit ? db.prepare(`${sql} LIMIT ?`).all(limit) : db.prepare(sql).all()) as News[];
+}
+
+export function getNewsBySlug(slug: string): News | undefined {
+	return db.prepare(`SELECT * FROM news WHERE slug = ?`).get(slug) as News | undefined;
 }

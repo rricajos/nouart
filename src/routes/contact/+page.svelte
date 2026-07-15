@@ -52,10 +52,33 @@
 			<h2>{site.name}</h2>
 			<ul>
 				<li><span class="lbl">Dónde</span> {contact.location}</li>
+				{#if contact.address}
+					<li>
+						<span class="lbl">Dirección</span>
+						{contact.address}
+						<!-- Enlace al mapa en vez de iframe: incrustar Google Maps cargaría cookies de
+						     terceros y obligaría a un banner de consentimiento. -->
+						<a class="map" href="https://www.openstreetmap.org/search?query={encodeURIComponent(contact.address)}" target="_blank" rel="noopener">Ver en el mapa ↗</a>
+					</li>
+				{/if}
 				<li><span class="lbl">Email</span> <a href="mailto:{contact.email}">{contact.email}</a></li>
-				{#if contact.phone}<li><span class="lbl">Teléfono</span> <a href="tel:{contact.phone}">{contact.phone}</a></li>{/if}
+				{#if contact.phone}<li><span class="lbl">Teléfono</span> <a href="tel:{contact.phone.replace(/\s/g, '')}">{contact.phone}</a></li>{/if}
 				{#if contact.hours}<li><span class="lbl">Horario</span> {contact.hours}</li>{/if}
+				{#if contact.instagram || contact.facebook || contact.youtube}
+					<li>
+						<span class="lbl">Redes</span>
+						<span class="social">
+							{#if contact.instagram}<a href={contact.instagram} target="_blank" rel="noopener">Instagram</a>{/if}
+							{#if contact.facebook}<a href={contact.facebook} target="_blank" rel="noopener">Facebook</a>{/if}
+							{#if contact.youtube}<a href={contact.youtube} target="_blank" rel="noopener">YouTube</a>{/if}
+						</span>
+					</li>
+				{/if}
 			</ul>
+			<p class="muted more">
+				¿Quieres asociarte? Mira <a href="/join">hazte socio</a> o las
+				<a href="/faq">preguntas frecuentes</a>.
+			</p>
 		</aside>
 	</div>
 </div>
@@ -72,6 +95,10 @@
 	.info ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.9rem; }
 	.info .lbl { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.1rem; }
 	.info a { color: var(--accent); }
+	.map { display: inline-block; margin-top: 0.3rem; font-size: 0.88rem; text-decoration: underline; }
+	.social { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+	.more { margin: 1.2rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.9rem; }
+	.more a { text-decoration: underline; }
 	@media (max-width: 780px) {
 		.layout { grid-template-columns: 1fr; }
 	}

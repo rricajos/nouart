@@ -85,6 +85,7 @@
 	const nav = [
 		{ href: '/', label: 'Inicio' },
 		{ href: '/agenda', label: 'Agenda' },
+		{ href: '/news', label: 'Noticias' },
 		{ href: '/gallery', label: 'Galería' },
 		{ href: '/artists', label: 'Artistas' },
 		{ href: '/about', label: 'Acerca de' },
@@ -97,6 +98,7 @@
 	// Etiqueta de la sección actual para la barra superior en móvil.
 	const sections = [
 		{ test: (p: string) => p.startsWith('/agenda'), label: 'Agenda' },
+		{ test: (p: string) => p.startsWith('/news'), label: 'Noticias' },
 		{ test: (p: string) => p.startsWith('/gallery') || p.startsWith('/work'), label: 'Galería' },
 		{ test: (p: string) => p.startsWith('/artist'), label: 'Artistas' },
 		{ test: (p: string) => p.startsWith('/about'), label: 'Acerca de' },
@@ -225,6 +227,7 @@
 			<h4>Explorar</h4>
 			<a href="/">Inicio</a>
 			<a href="/agenda">Agenda</a>
+			<a href="/news">Noticias</a>
 			<a href="/gallery">Galería</a>
 			<a href="/artists">Artistas</a>
 		</nav>

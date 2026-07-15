@@ -1,4 +1,9 @@
-import { listPublishedArtworks, listArtists, listPublishedEvents } from '$lib/server/queries';
+import {
+	listPublishedArtworks,
+	listArtists,
+	listPublishedEvents,
+	listPublishedNews
+} from '$lib/server/queries';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = () => {
@@ -7,6 +12,7 @@ export const load: PageServerLoad = () => {
 		featured: artworks.slice(0, 8),
 		total: artworks.length,
 		artists: listArtists(),
-		upcoming: listPublishedEvents().upcoming.slice(0, 3)
+		upcoming: listPublishedEvents().upcoming.slice(0, 3),
+		latestNews: listPublishedNews(3)
 	};
 };

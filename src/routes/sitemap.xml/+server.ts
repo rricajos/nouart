@@ -10,10 +10,14 @@ export const GET: RequestHandler = ({ url }) => {
 	const events = db
 		.prepare(`SELECT slug FROM events WHERE published = 1`)
 		.all() as { slug: string }[];
+	const news = db
+		.prepare(`SELECT slug FROM news WHERE published = 1`)
+		.all() as { slug: string }[];
 
 	const urls = [
 		'',
 		'/agenda',
+		'/news',
 		'/gallery',
 		'/artists',
 		'/about',
@@ -26,6 +30,7 @@ export const GET: RequestHandler = ({ url }) => {
 		'/privacy',
 		'/cookies',
 		...events.map((e) => `/agenda/${e.slug}`),
+		...news.map((n) => `/news/${n.slug}`),
 		...artists.map((a) => `/artist/${a.slug}`),
 		...artworks.map((w) => `/work/${w.slug}`)
 	];

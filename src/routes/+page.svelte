@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ArtworkCard from '$lib/components/ArtworkCard.svelte';
 	import Testimonials from '$lib/components/Testimonials.svelte';
-	import { calendarBadge } from '$lib/date';
+	import { calendarBadge, formatEventDate } from '$lib/date';
 	import { site, services } from '$lib/content';
 	let { data } = $props();
 </script>
@@ -43,6 +43,27 @@
 					<span class="ev-info">
 						<strong>{e.title}</strong>
 						<span class="muted meta">{#if e.time}{e.time}{/if}{#if e.time && e.location} · {/if}{e.location}</span>
+					</span>
+				</a>
+			{/each}
+		</div>
+	</section>
+{/if}
+
+{#if data.latestNews.length}
+	<section class="wrap block">
+		<div class="block-head">
+			<h2>Últimas noticias</h2>
+			<a href="/news" class="muted see-all">Ver todas →</a>
+		</div>
+		<div class="news-row">
+			{#each data.latestNews as n (n.id)}
+				<a class="np" href="/news/{n.slug}">
+					{#if n.image}<span class="np-thumb"><img src="/uploads/{n.image}" alt="" loading="lazy" /></span>{/if}
+					<span class="np-body">
+						{#if n.date}<span class="np-date">{formatEventDate(n.date)}</span>{/if}
+						<strong>{n.title}</strong>
+						{#if n.summary}<span class="muted np-sum">{n.summary}</span>{/if}
 					</span>
 				</a>
 			{/each}
@@ -130,6 +151,15 @@
 	.ev-info { min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
 	.ev-info strong { font-family: var(--serif); font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 	.ev-info .meta { font-size: 0.85rem; }
+	.news-row { display: grid; gap: 1.2rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+	.np { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.18s, box-shadow 0.18s; }
+	.np:hover { transform: translateY(-3px); box-shadow: 0 12px 34px rgba(0,0,0,.14); }
+	.np-thumb { aspect-ratio: 16 / 9; background: var(--surface-2); overflow: hidden; }
+	.np-thumb img { width: 100%; height: 100%; object-fit: cover; }
+	.np-body { padding: 0.9rem 1.1rem 1.1rem; display: flex; flex-direction: column; gap: 0.25rem; }
+	.np-date { font-size: 0.78rem; color: var(--accent); font-weight: 600; text-transform: capitalize; }
+	.np-body strong { font-family: var(--serif); font-size: 1.15rem; line-height: 1.25; }
+	.np-sum { font-size: 0.9rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 	.services { display: grid; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
 	.service {
 		padding: 1.6rem; background: var(--surface); border: 1px solid var(--line);
