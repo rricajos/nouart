@@ -25,7 +25,8 @@ Panel: http://localhost:5173/admin — contraseña por defecto `nouart` (var `AD
 ## Variables de entorno
 
 Ver [`.env.example`](.env.example). Las importantes: `ADMIN_PASSWORD`, `SESSION_SECRET`,
-`RESEND_API_KEY` (opcional), `DATA_DIR`.
+`MAIL_HOST`/`MAIL_USER`/`MAIL_PASS` (correo por Barcinet; sin ellos los envíos
+van a `data/outbox.jsonl`), `DATA_DIR`.
 
 ## Producción
 

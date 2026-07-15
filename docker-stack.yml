@@ -18,8 +18,14 @@ services:
       # Secrets — set on the VPS, do NOT commit real values (see .env.example):
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       SESSION_SECRET: ${SESSION_SECRET}
-      RESEND_API_KEY: ${RESEND_API_KEY:-}
-      MAIL_FROM: ${MAIL_FROM:-Nou Art <noreply@nouart.org>}
+      # Correo por Barcinet (Mox), infraestructura propia — no un relay externo.
+      # Mox no escucha en el 587: TLS implícito en el 465. Login = la dirección
+      # completa, NO el nombre de cuenta de Mox.
+      MAIL_HOST: ${MAIL_HOST:-mail.barcinet.com}
+      MAIL_PORT: ${MAIL_PORT:-465}
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-Nou Art <no-reply@nouart.org>}
       CONTACT_FALLBACK: ${CONTACT_FALLBACK:-hola@nouart.org}
     volumes:
       - nouart_data:/data

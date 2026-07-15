@@ -20,8 +20,11 @@ En `/home/ricajos/nouart/.env` (a partir de `.env.example`):
 ```bash
 ADMIN_PASSWORD=<contraseña del panel>
 SESSION_SECRET=$(openssl rand -hex 32)
-RESEND_API_KEY=            # opcional; vacío = los mensajes van a data/outbox.jsonl
-MAIL_FROM=Nou Art <noreply@nouart.org>
+MAIL_HOST=mail.barcinet.com  # correo por Barcinet (Mox), no relay externo
+MAIL_PORT=465               # Mox no escucha en el 587: TLS implícito
+MAIL_USER=no-reply@nouart.org   # login = la dirección, NO el nombre de cuenta
+MAIL_PASS=                  # vacío = los mensajes van a data/outbox.jsonl
+MAIL_FROM="Nou Art <no-reply@nouart.org>"   # comillas: el < es redirección al sourcear
 CONTACT_FALLBACK=hola@nouart.org
 ```
 
