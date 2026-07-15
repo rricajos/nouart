@@ -3,12 +3,16 @@ import { db, type Attachment } from '$lib/server/db';
 import { sendMail } from '$lib/server/email';
 import { saveAttachment, deleteAttachments, ATTACH_MAX_FILES } from '$lib/server/uploads';
 import { contact, topicById } from '$lib/content';
-import type { Actions } from './$types';
+import { issueFormToken, checkFormToken } from '$lib/server/antispam';
+import type { Actions, PageServerLoad } from './$types';
+
+/** Token firmado que viaja en el formulario para detectar envíos automáticos. */
+export const load: PageServerLoad = () => ({ formToken: issueFormToken() });
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
 		const form = await request.formData();
-		// Honeypot anti-spam.
+		// Honeypot: los bots rellenan campos ocultos. Fingimos éxito para no darles pistas.
 		if (form.get('website')) return { sent: true, tracked: false };
 		const name = String(form.get('name') ?? '').trim();
 		const email = String(form.get('email') ?? '').trim();
@@ -20,6 +24,28 @@ export const actions: Actions = {
 
 		if (name.length < 2 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || body.length < 2) {
 			return fail(400, { error: 'Revisa tu nombre, email y mensaje.', ...values });
+		}
+
+		// --- Verificación anti-bot (sin terceros) ---
+		if (!form.get('human')) {
+			return fail(400, { error: 'Marca la casilla para confirmar que no eres un robot.', ...values });
+		}
+		switch (checkFormToken(String(form.get('ts') ?? ''))) {
+			case 'too-fast':
+				return fail(400, {
+					error: 'El envío ha sido demasiado rápido. Revisa el mensaje y vuelve a enviarlo.',
+					...values
+				});
+			case 'expired':
+				return fail(400, {
+					error: 'El formulario llevaba mucho tiempo abierto. Recarga la página y vuelve a enviarlo.',
+					...values
+				});
+			case 'invalid':
+				return fail(400, {
+					error: 'No hemos podido validar el envío. Recarga la página e inténtalo de nuevo.',
+					...values
+				});
 		}
 
 		// --- Adjuntos (opcionales) ---

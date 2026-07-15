@@ -147,6 +147,8 @@
 					{#if form?.error}<div class="flash flash-err">{form.error}</div>{/if}
 					<input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" />
 					<input type="hidden" name="topic" value={topic ?? ''} />
+					<!-- Marca de tiempo firmada: delata los envíos automáticos sin molestar. -->
+					<input type="hidden" name="ts" value={data.formToken} />
 					<div class="row">
 						<div class="field">
 							<label for="name">Nombre</label>
@@ -211,6 +213,11 @@
 							</ul>
 						{/if}
 					</div>
+					<label class="human">
+						<input type="checkbox" name="human" required />
+						<span>Confirmo que no soy un robot</span>
+					</label>
+
 					<button class="btn btn-primary">Enviar mensaje</button>
 				</form>
 			{/if}
@@ -300,6 +307,16 @@
 	.drop-main { font-size: 0.95rem; color: var(--text); }
 	.drop-main strong { color: var(--accent); }
 	.drop-hint { font-size: 0.8rem; }
+
+	/* Casilla anti-robot: zona de toque amplia y legible (público poco técnico). */
+	.human {
+		display: flex; align-items: center; gap: 0.7rem; cursor: pointer;
+		margin: 1.4rem 0 1.2rem; padding: 0.9rem 1rem; font-size: 0.98rem; font-weight: 500;
+		background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+		transition: border-color 0.15s;
+	}
+	.human:hover, .human:focus-within { border-color: var(--accent); }
+	.human input { width: 20px; height: 20px; flex: none; accent-color: var(--accent); }
 
 	.file-err { margin: 0.6rem 0 0; font-size: 0.88rem; color: #c0392b; }
 	.files { list-style: none; padding: 0; margin: 0.7rem 0 0; display: flex; flex-direction: column; gap: 0.4rem; }
