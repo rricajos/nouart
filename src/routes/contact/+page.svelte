@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fly } from 'svelte/transition';
+	import { page } from '$app/state';
 	import { contact, site, contactTopics, topicById } from '$lib/content';
 	import {
 		ATTACH_HINT,
@@ -12,10 +13,11 @@
 	let { data, form } = $props();
 
 	// Paso 1: el tema se elige antes de escribir → fija el asunto y permite filtrar los
-	// mensajes en el panel. Se inicializa desde `form` para no perderlo si falla la
-	// validación (o si el navegador no tiene JS).
-	let topic = $state<string | null>(form?.topic ?? null);
-	const chosen = $derived(topicById(topic));
+	// mensajes en el panel. Va en la URL (?topic=…) en vez de en estado local: así las
+	// tarjetas son enlaces reales (funciona sin JS), se puede enlazar directo desde otras
+	// páginas y el tema sobrevive a un error de validación.
+	const chosen = $derived(topicById(page.url.searchParams.get('topic')));
+	const topic = $derived(chosen?.id ?? null);
 
 	// Zona de adjuntos: el <input type=file> real queda oculto pero sigue siendo el que
 	// envía el formulario; aquí solo gestionamos la lista y la sincronizamos con él.
@@ -87,11 +89,11 @@
 			</p>
 			<div class="topics">
 				{#each contactTopics as t (t.id)}
-					<button type="button" class="tcard" onclick={() => (topic = t.id)}>
+					<a class="tcard" href="/contact?topic={t.id}">
 						<span class="tc-label">{t.label}</span>
 						<span class="tc-desc muted">{t.desc}</span>
 						<span class="tc-go">Continuar →</span>
-					</button>
+					</a>
 				{/each}
 			</div>
 		</div>
@@ -121,7 +123,7 @@
 				{#if chosen}
 					<div class="chosen">
 						<span class="ch-txt">Tema: <strong>{chosen.label}</strong></span>
-						<button type="button" class="ch-change" onclick={() => (topic = null)}>Cambiar</button>
+						<a class="ch-change" href="/contact">Cambiar</a>
 					</div>
 				{/if}
 				<form method="POST" enctype="multipart/form-data" use:enhance>
@@ -250,6 +252,7 @@
 		transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
 	}
 	.tcard:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,.12); }
+	.tcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 	.tc-label { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; color: var(--text); }
 	.tc-desc { font-size: 0.9rem; line-height: 1.45; }
 	.tc-go { margin-top: 0.7rem; font-size: 0.85rem; font-weight: 600; color: var(--accent); }

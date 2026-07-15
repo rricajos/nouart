@@ -58,7 +58,7 @@
 			Escríbenos y te acompañamos en el alta. Estamos en {contact.location}.
 		</p>
 		<div class="cta-row">
-			<a href="/contact" class="btn btn-primary">Quiero asociarme</a>
+			<a href="/contact?topic=socio" class="btn btn-primary">Quiero asociarme</a>
 			<a href="mailto:{contact.email}" class="btn">{contact.email}</a>
 		</div>
 	</section>
